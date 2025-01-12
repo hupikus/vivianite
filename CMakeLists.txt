@@ -5,33 +5,31 @@ SET(TARGET vivianite)
 project(vivianite)
 include_directories(${PROJECT_SOURCE_DIR})
 
-
-find_package(SFML 2.5 REQUIRED
-            graphics
-            window
-            system)
-
+#add_subdirectory(bgfx/bx)
+#add_subdirectory(bgfx/bimg)
+#add_subdirectory(bgfx/bgfx)
 
 set(RENDERER_SOURCE field_renderer.cpp)
 
+
 set(SOURCES
-    window.cpp
-    editor.cpp
     main.cpp
-    field.cpp
-    ${RENDERER_SOURCE}
+    window.cpp
+    #editor.cpp
+    #field.cpp
+    #${RENDERER_SOURCE}
     )
+
 
 set(HEADERS
     shared_prefs.h
     window.h
-    field.h
-    field_renderer.h
+    #field.h
+    #field_renderer.h
     )
 
-
-
 add_executable(${TARGET} ${SOURCES})
+#add_executable(${TARGET} main.cpp)
 
-target_sources(${TARGET} PRIVATE editor.cpp ${RENDERER_SOURCE})
-target_link_libraries(${TARGET} PRIVATE sfml-graphics sfml-window sfml-system)
+#target_sources(${TARGET} PRIVATE main.cpp window.cpp)
+target_link_libraries(${TARGET} -lraylib)

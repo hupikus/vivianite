@@ -1,5 +1,6 @@
 build/*
 !build/
 vivianite
-vivianite.ico
 extra/nuklear.h
+.fleet
+.cache

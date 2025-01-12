@@ -7,9 +7,11 @@
 class Field
 {
 private:
+    std::string file;
     int symbol, column;
+    float scrollpos = 0.0f;
 public:
-    Field();
+    Field(std::string filepath);
 
     std::vector<std::string> Text;
 };

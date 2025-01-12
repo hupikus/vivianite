@@ -3,6 +3,7 @@
 #ifndef EDITOR
 #define EDITOR
 
+#include "shared_prefs.h"
 #include "field_renderer.h"
 #include "field.h"
 
@@ -10,32 +11,31 @@
 class Editor
 {
 private:
-    std::string path;
-    sf::RenderWindow* window;
     Field* field;
     FieldRenderer* renderer;
+
+    size_t width, height;
 
     bool active = false;
 
     //prefs
-    sf::Font mainFont;
+    Font font;
+
 
     //composite rendering
-    sf::View* view;
-    sf::RenderTexture codeTexture;
-    sf::Sprite codeSprite;
+    iRect codeArea;
+
 
 public:
-    Editor(std::string workpath);
+    Editor(size_t f_width, size_t f_height);
     ~Editor();
 
     static ColorSet colorTheme;
 
-    void init();
+    void Init();
 
-    void abort();
+    void Abort();
 
-    void process();
 
     void Render();
 

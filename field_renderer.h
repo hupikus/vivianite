@@ -1,11 +1,12 @@
-#include <SFML/Graphics.hpp>
-#include <SFML/Graphics/RenderTexture.hpp>
+#include "raylib.hpp"
+#include <raylib.h>
+#include <vector>
 
 #ifndef FIELD_RENDERER
 #define FIELD_RENDERER
 
-#include "field.h"
 #include "shared_prefs.h"
+#include "field.h"
 
 
 
@@ -13,18 +14,26 @@ class FieldRenderer
 {
 private:
     Field& field;
-    sf::RenderTexture& surface;
+    Font& font;
 
     float scale = 100.0f;
-    int width, height;
+    int posx, posy;
+    size_t width, height;
 
-    ColorSet colors;
-    sf::Font font;
+    ColorSet* colors;
+    Vector2 fontSize;
 
+    //cached
+    //std::vector<sf::Text> Texts;
+    //std::vector<sf::Text> LineNumbers;
+    size_t actual_size = 0;
 
+    void GenText(size_t start_line);
+    //sf::Text* GetText(size_t& index);
 
 public:
-    FieldRenderer(Field& field, sf::RenderTexture& surface, int field_width, int field_height);
+    FieldRenderer(Field& field, Font& code_font, iRect* surface);
+
 
     void Render();
 };

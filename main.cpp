@@ -2,7 +2,6 @@
 #ifndef MAIN_CPP
 #define MAIN_CPP
 
-#include "editor.h"
 #include "window.h"
 
 
@@ -19,6 +18,8 @@ int main(int argc, char* argv[])
     if (argc > 2 && *argv[1] == '-' && *(argv[1] + 1) == 't') { path = argv[2]; }
 
     Window window(WIDTH, HEIGHT);
+    window.InitUI();
+    window.Render();
     //std::thread editor_process(&Editor::process, &editor);
     //editor_process.detach();
 

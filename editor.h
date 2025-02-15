@@ -20,10 +20,13 @@ private:
 
     //prefs
     Font font;
+    std::string fontName;
+    float fontSize;
 
 
     //composite rendering
     iRect codeArea;
+
 
 
 public:

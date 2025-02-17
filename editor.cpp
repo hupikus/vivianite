@@ -52,11 +52,20 @@ Editor::~Editor()
 
 void Editor::Render()
 {
+    //TODO: separate threads
+    if (field->InputLoop())
+    {
+        renderer->Update(field->cursor_y);
+    }
+
+
+
     ClearBackground(colorTheme.background);
     //DrawTextEx(font, "Nu suka", (Vector2){200, 50}, 96, 22.0f, WHITE);
     BeginScissorMode(0, 0, width, height);
     renderer->Render();
     EndScissorMode();
+
 
 }
 

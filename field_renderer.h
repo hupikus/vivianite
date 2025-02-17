@@ -36,7 +36,7 @@ private:
     std::vector<std::vector<Color>> highlight;
 
     void GenText(size_t start_line);
-    void UpdateKeywordCheck(std::string* buffer, size_t x, size_t y);
+    void UpdateKeywordCheck(std::string* buffer, size_t x, size_t y, bool check_mode);
     void DrawLine();
 
 public:
@@ -45,8 +45,10 @@ public:
 
 
     void Render();
+    void Update(size_t FromLine);
 };
 
+//Structure representing code state at given cursor position
 struct CodeState
 {
     size_t x = 0;
@@ -56,8 +58,18 @@ struct CodeState
     bool squote = false;
     bool multiline_comment = false;
 
-    //brackets
-    int brackets[4] = {0, 0, 0, 0};
+    //brackets () [] {}
+    int brackets = 0;
+
+    //definitions
+    size_t awaits_name = 0;
+    //analyser
+    std::vector<std::string> vars = std::vector<std::string>(24); //1
+    std::vector<std::string> functions = std::vector<std::string>(24); //2
+    std::vector<std::string> classes = std::vector<std::string>(24); //3
+
+    //functions
+    int awaits_namespace_member = 0;
 };
 
 struct CodePalette
@@ -67,12 +79,17 @@ struct CodePalette
     Color variable;
     Color function;
     Color keyword;
+    Color logic;
+    Color branch;
+    Color definition;
+    Color namspace;
     Color string;
     Color number;
-    Color brackets[3];
+    Color brackets[5];
     Color commas;
     Color lines;
     Color escape;
+    Color error;
 };
 
 

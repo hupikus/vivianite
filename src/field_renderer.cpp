@@ -72,12 +72,12 @@ std::array<std::array<std::string, 25>, 9> builtins = {{
 }};
 
 
-FieldRenderer::~FieldRenderer()
-{
-    //Why segfault
-    //UnloadFont(font);
-    //UnloadFont(counterFont);
-}
+// FieldRenderer::~FieldRenderer()
+// {
+//     //Why segfault
+//     UnloadFont(font);
+//     UnloadFont(counterFont);
+// }
 
 void FieldRenderer::Update(size_t FromLine)
 {
@@ -87,16 +87,10 @@ void FieldRenderer::Update(size_t FromLine)
     GenText(0);
 }
 
-FieldRenderer::FieldRenderer(Field& active_field, const char* code_font, iRect* surface) : field(active_field)
+FieldRenderer::FieldRenderer(Field& active_field, const char* code_font) : field(active_field)
 {
-    posx = surface->pos_x;
-    posy = surface->pos_y;
-    width = surface->width;
-    height = surface->height;
-
-
     font = LoadFontEx(code_font, FONT_SIZE, 0, 0);
-    counterFont = LoadFontEx("fonts/Roboto_Condensed-Black.ttf", LINE_COUNTER_SIZE, 0, 0);
+    counterFont = LoadFontEx("assets/fonts/Roboto_Condensed-Black.ttf", LINE_COUNTER_SIZE, 0, 0);
 
     SetTextLineSpacing(FONT_SIZE);
     fontSize = MeasureTextEx(font, " ", FONT_SIZE, FONT_SIZE);
@@ -137,25 +131,30 @@ FieldRenderer::FieldRenderer(Field& active_field, const char* code_font, iRect* 
     GenText(0);
 }
 
-void FieldRenderer::Render()
+void FieldRenderer::Render(int pos_x, int pos_y, size_t width, size_t height)
 {
     //code
     size_t x = 0;
     size_t y = 0;
+    float check_y = 0.0f;
     for (const std::string_view& line : field.Text)
     {
         //Code
         x = 0;
+        check_y = VERTICAL_MARGIN + FONT_SIZE * y;
+        if (check_y > height) { break; }
+        check_y += pos_y;
+
         for (auto codepoint = line.begin(); codepoint != line.end(); ++codepoint)
         {
-            DrawTextCodepoint(font, *codepoint, Vector2{HORIZONTAL_MARGIN + fontSize.x * x, VERTICAL_MARGIN + FONT_SIZE * y}, FONT_SIZE, highlight[y][x]);
+            DrawTextCodepoint(font, *codepoint, Vector2{pos_x + HORIZONTAL_MARGIN + fontSize.x * x, check_y}, FONT_SIZE, highlight[y][x]);
             ++x;
         }
         //Line counter
         x = 0;
         for (auto i : lines[y])
         {
-            DrawTextCodepoint(counterFont, i, Vector2{5.0f + LINE_COUNTER_SPACING * x, VERTICAL_MARGIN + FONT_SIZE * y + ((FONT_SIZE - LINE_COUNTER_SIZE) / 2)}, LINE_COUNTER_SIZE, palette->lines);
+            DrawTextCodepoint(counterFont, i, Vector2{pos_x + 5.0f + LINE_COUNTER_SPACING * x, check_y + ((FONT_SIZE - LINE_COUNTER_SIZE) / 2)}, LINE_COUNTER_SIZE, palette->lines);
             ++x;
         }
         ++y;

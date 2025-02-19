@@ -1,6 +1,5 @@
 #define RAYLIB_DEBUG
 #include <raylib.h>
-//#include <iostream>
 
 #include "window.h"
 
@@ -24,9 +23,9 @@ Window::Window(int window_width, int window_height)
     InitWindow(window_width, window_height, "Vivianite");
 
     //prefs
-    SetWindowIcon(LoadImage("vivianite.png"));
+    SetWindowIcon(LoadImage("assets/vivianite.png"));
     SetWindowMinSize(MIN_WIDTH, MIN_HEIGHT);
-    SetTargetFPS(60);
+    //SetTargetFPS(60);
     SetExitKey(0);
 
 }
@@ -40,17 +39,21 @@ Window::~Window()
 
 void Window::InitUI()
 {
-    editor = new Editor(WIDTH, HEIGHT);
+    editor = new Editor();
     editor->Init();
 }
 
 void Window::Render()
 {
+
     while (!WindowShouldClose())
     {
+        width = GetRenderHeight();
+        height = GetRenderHeight();
+
         BeginDrawing();
 
-        editor->Render();
+        editor->Render(width, height);
 
         EndDrawing();
     }

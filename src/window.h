@@ -2,7 +2,7 @@
 class Window
 {
 private:
-    int width, height;
+    size_t width, height;
     //float pos_x, pos_y;
     //float velocity_x = 100.0f, velocity_y = 0.0f;
 

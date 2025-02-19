@@ -5,13 +5,14 @@
 #include <utility>
 #include <vector>
 
+#include "elements/abstract/renderer.h"
 #include "shared_prefs.h"
 #include "raylib_type.h"
 #include "field.h"
 
 
 
-class FieldRenderer
+class FieldRenderer : Renderer
 {
 private:
     Field& field;
@@ -20,8 +21,6 @@ private:
     Font counterFont;
 
     float scale = 100.0f;
-    int posx, posy;
-    size_t width, height;
 
     //customization
     ColorSet* colors;
@@ -40,11 +39,10 @@ private:
     void DrawLine();
 
 public:
-    FieldRenderer(Field& field, const char* code_font, iRect* surface);
-    ~FieldRenderer();
+    FieldRenderer(Field& field, const char* code_font);
 
 
-    void Render();
+    void Render(int pos_x, int pos_y, size_t width, size_t height);
     void Update(size_t FromLine);
 };
 

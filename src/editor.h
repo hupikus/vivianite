@@ -14,8 +14,6 @@ private:
     Field* field;
     FieldRenderer* renderer;
 
-    size_t width, height;
-
     bool active = false;
 
     //prefs
@@ -23,14 +21,8 @@ private:
     std::string fontName;
     float fontSize;
 
-
-    //composite rendering
-    iRect codeArea;
-
-
-
 public:
-    Editor(size_t f_width, size_t f_height);
+    Editor();
     ~Editor();
 
     static ColorSet colorTheme;
@@ -40,7 +32,7 @@ public:
     void Abort();
 
 
-    void Render();
+    void Render(size_t width, size_t height);
 
 };
 

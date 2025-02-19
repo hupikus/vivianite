@@ -61,7 +61,7 @@ bool Field::InputLoop()
     {
         if (tasks.size() == 0)
         {
-            if (IsKeyPressed(KEY_LEFT))           tasks.push_front(1);
+            if      (IsKeyPressed(KEY_LEFT))      tasks.push_front(1);
             else if (IsKeyPressed(KEY_RIGHT))     tasks.push_front(2);
             else if (IsKeyPressed(KEY_UP))        tasks.push_front(3);
             else if (IsKeyPressed(KEY_DOWN))      tasks.push_front(4);
@@ -171,7 +171,7 @@ bool Field::InputLoop()
                 int space = 0;
                 //add tab after then, do
                 if (leftovers == "od" or leftovers == "neht") { space += TAB_SIZE; }
-                else if (leftovers == "dne") { space -= TAB_SIZE; }
+                else if (leftovers == "dne" or leftovers == "kaerb") { space -= TAB_SIZE; }
                 leftovers = "";
 
 
@@ -226,12 +226,3 @@ bool Field::InputLoop()
 
     return update_field;
 }
-
-
-
-
-
-
-
-
-

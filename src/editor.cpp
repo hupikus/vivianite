@@ -14,26 +14,18 @@ ColorSet Editor::colorTheme
     Color{91,  97,  105, 255}, // inactive
 };
 
-Editor::Editor(size_t f_width, size_t f_height)
+Editor::Editor()
 {
-    width = f_width;
-    height = f_height;
-
-    //areas, customizable
-    codeArea = {0, 0, width, height};
-
-    fontName = "fonts/Menlo-Bold.ttf";
-    font = LoadFontEx("fonts/Menlo-Bold.ttf", 96, 0, 0);
+    fontName = "assets/fonts/Menlo-Bold.ttf";
+    font = LoadFontEx("assets/fonts/Menlo-Bold.ttf", 96, 0, 0);
     GenTextureMipmaps(&font.texture);
-
-
     fontSize = (float)font.baseSize;
 }
 
 void Editor::Init()
 {
     field = new Field("");
-    renderer = new FieldRenderer(*field, "fonts/Menlo-Bold.ttf", &codeArea);
+    renderer = new FieldRenderer(*field, "assets/fonts/Menlo-Bold.ttf");
 
 }
 
@@ -50,20 +42,16 @@ Editor::~Editor()
 
 
 
-void Editor::Render()
+void Editor::Render(size_t width, size_t height)
 {
     //TODO: separate threads
     if (field->InputLoop())
     {
         renderer->Update(field->cursor_y);
     }
-
-
-
     ClearBackground(colorTheme.background);
-    //DrawTextEx(font, "Nu suka", (Vector2){200, 50}, 96, 22.0f, WHITE);
     BeginScissorMode(0, 0, width, height);
-    renderer->Render();
+    renderer->Render(0, 0, width, height);
     EndScissorMode();
 
 

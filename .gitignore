@@ -2,3 +2,4 @@ build/*
 !build/
 vivianite
 .cache
+.kateproject.build

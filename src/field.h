@@ -1,9 +1,9 @@
-#ifndef FIELD
-#define FIELD
-
 #include <string>
 #include <vector>
 #include <deque>
+
+#ifndef FIELD
+#define FIELD
 
 class Field
 {
@@ -22,7 +22,7 @@ private:
 public:
     Field(std::string filepath);
 
-    bool InputLoop();
+    bool InputLoop(float deltatime);
 
     std::vector<std::string> Text;
 

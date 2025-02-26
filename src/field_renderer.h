@@ -1,6 +1,3 @@
-#ifndef FIELD_RENDERER
-#define FIELD_RENDERER
-
 #include <raylib.h>
 #include <utility>
 #include <vector>
@@ -10,7 +7,8 @@
 #include "raylib_type.h"
 #include "field.h"
 
-
+#ifndef FIELD_RENDERER
+#define FIELD_RENDERER
 
 class FieldRenderer : Renderer
 {

@@ -1,4 +1,5 @@
 #include <raylib.h>
+#include <iostream>
 
 #include <cstring>
 #include <algorithm>
@@ -136,19 +137,31 @@ void FieldRenderer::Render(int pos_x, int pos_y, size_t width, size_t height)
     //code
     size_t x = 0;
     size_t y = 0;
+    size_t index = 0;
     float check_y = 0.0f;
+
+
+    size_t wrap_offset = 0;
+    size_t wrap_howmany_fit = (width - HORIZONTAL_MARGIN) / fontSize.x - 1;
+
     for (const std::string_view& line : field.Text)
     {
         //Code
         x = 0;
-        check_y = VERTICAL_MARGIN + FONT_SIZE * y;
+        index = 0;
+
+        check_y = VERTICAL_MARGIN + FONT_SIZE * (y + wrap_offset);
         if (check_y > height) { break; }
         check_y += pos_y;
 
         for (auto codepoint = line.begin(); codepoint != line.end(); ++codepoint)
         {
-            DrawTextCodepoint(font, *codepoint, Vector2{pos_x + HORIZONTAL_MARGIN + fontSize.x * x, check_y}, FONT_SIZE, highlight[y][x]);
+            DrawTextCodepoint(font, *codepoint, Vector2{pos_x + HORIZONTAL_MARGIN + fontSize.x * x, check_y + (FONT_SIZE * wrap_offset) }, FONT_SIZE, highlight[y][index]);
             ++x;
+            ++index;
+
+            //wrap
+            if (x > wrap_howmany_fit) { ++wrap_offset; x = 0; }
         }
         //Line counter
         x = 0;
@@ -161,7 +174,15 @@ void FieldRenderer::Render(int pos_x, int pos_y, size_t width, size_t height)
     }
 
     //cursor and selection
-    DrawRectangle(HORIZONTAL_MARGIN + fontSize.x * field.cursor_x, VERTICAL_MARGIN + field.cursor_y * FONT_SIZE, 2, FONT_SIZE, WHITE);
+    x = field.cursor_x;
+    y = field.cursor_y;
+    if (x > wrap_howmany_fit)
+    {
+        y += x / wrap_howmany_fit;
+        x %= wrap_howmany_fit;
+        --x;
+    }
+    DrawRectangle(HORIZONTAL_MARGIN + fontSize.x * x, VERTICAL_MARGIN + y * FONT_SIZE, 2, FONT_SIZE, WHITE);
 
 }
 
@@ -241,7 +262,7 @@ const Color* KeywordCheck(const std::string* buffer, const CodePalette* palette,
 
 }
 
-//Generate text highlight
+//Generate text highlight and analyse code through quickly
 void FieldRenderer::GenText(size_t start_line)
 {
     size_t size = field.Text.size();

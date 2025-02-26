@@ -1,7 +1,9 @@
 #include <raylib.h>
 #include <cstddef>
+
 #ifndef SHARED_PREFS
 #define SHARED_PREFS
+
 typedef struct ColorSet
 {
     Color text;

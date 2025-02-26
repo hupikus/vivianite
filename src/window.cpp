@@ -3,11 +3,6 @@
 
 #include "window.h"
 
-#include "editor.h"
-
-
-#define WIDTH 900
-#define HEIGHT 600
 #define MIN_WIDTH 350
 #define MIN_HEIGHT 220
 
@@ -25,7 +20,7 @@ Window::Window(int window_width, int window_height)
     //prefs
     SetWindowIcon(LoadImage("assets/vivianite.png"));
     SetWindowMinSize(MIN_WIDTH, MIN_HEIGHT);
-    //SetTargetFPS(60);
+    SetTargetFPS(240);
     SetExitKey(0);
 
 }
@@ -33,30 +28,5 @@ Window::Window(int window_width, int window_height)
 Window::~Window()
 {
     if (IsWindowReady()) { CloseWindow(); }
-    delete editor;
 }
 
-
-void Window::InitUI()
-{
-    editor = new Editor();
-    editor->Init();
-}
-
-void Window::Render()
-{
-
-    while (!WindowShouldClose())
-    {
-        width = GetRenderHeight();
-        height = GetRenderHeight();
-
-        BeginDrawing();
-
-        editor->Render(width, height);
-
-        EndDrawing();
-    }
-
-  CloseWindow();
-}

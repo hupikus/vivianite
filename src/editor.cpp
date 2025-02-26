@@ -3,6 +3,7 @@
 
 #include "editor.h"
 
+
 #define DEBUG_FONT_SIZE 52
 
 ColorSet Editor::colorTheme
@@ -16,36 +17,27 @@ ColorSet Editor::colorTheme
 
 Editor::Editor()
 {
-    fontName = "assets/fonts/Menlo-Bold.ttf";
+    active = true;
+}
+
+
+void Editor::Start()
+{
     font = LoadFontEx("assets/fonts/Menlo-Bold.ttf", 96, 0, 0);
+
     GenTextureMipmaps(&font.texture);
     fontSize = (float)font.baseSize;
-}
 
-void Editor::Init()
-{
     field = new Field("");
+
+
     renderer = new FieldRenderer(*field, "assets/fonts/Menlo-Bold.ttf");
-
-}
-
-void Editor::Abort()
-{
-    active = false;
-}
-
-Editor::~Editor()
-{
-    delete field;
-    delete renderer;
 }
 
 
-
-void Editor::Render(size_t width, size_t height)
+void Editor::Render(size_t width, size_t height, float deltatime)
 {
-    //TODO: separate threads
-    if (field->InputLoop())
+    if (field->InputLoop(deltatime)) //returns if need to update highlight
     {
         renderer->Update(field->cursor_y);
     }
@@ -56,6 +48,23 @@ void Editor::Render(size_t width, size_t height)
 
 
 }
+
+void Editor::Process(float deltatime)
+{
+}
+
+
+void Editor::Abort()
+{
+
+}
+
+Editor::~Editor()
+{
+    delete field;
+    delete renderer;
+}
+
 
 
 

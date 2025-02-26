@@ -1,7 +1,7 @@
+#include <cstddef>
+
 #ifndef ANY_RENDERER
 #define ANY_RENDERER
-
-#include <cstddef>
 
 class Renderer
 {

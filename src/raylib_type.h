@@ -1,7 +1,7 @@
+#include <raylib.h>
+
 #ifndef RAYLIB_TYPE
 #define RAYLIB_TYPE
-
-#include <raylib.h>
 
 typedef struct Text
 {

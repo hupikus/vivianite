@@ -38,17 +38,17 @@ endif()
 
 add_definitions(-O3)
 
-#set your custom code renderer here
-set(CODE_RENDERER_SOURCE src/field_renderer.cpp)
-
-
 set(SOURCES
     src/raylib_type.cpp
     src/main.cpp
+    src/structure/ui_loop.cpp
+    src/structure/compositor.cpp
     src/window.cpp
+
+    #editor
     src/editor.cpp
     src/field.cpp
-    ${CODE_RENDERER_SOURCE}
+    src/field_renderer.cpp
     )
 
 
@@ -58,5 +58,5 @@ if(PLATFORM STREQUAL "windows_x64")
     target_link_libraries(${TARGET} -g ${CMAKE_SOURCE_DIR}/extra/libraylib_win64.a -lopengl32 -lgdi32 -lwinmm)
 elseif(PLATFORM STREQUAL "linux_x64")
     add_executable(${TARGET} ${SOURCES})
-    target_link_libraries(${TARGET} -g -lraylib)
+    target_link_libraries(${TARGET} -g -lraylib -lpthread)
 endif()

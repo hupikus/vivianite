@@ -1,49 +1,64 @@
-#define TAB_SIZE 4
+#include <raylib.h>
+
+#include <array>
+#include <algorithm>
 
 #include "field.h"
-#include <raylib.h>
+
+
+#define TAB_SIZE 4
 
 Field::Field(std::string filepath)
 {
     file = filepath;
     Text = {""};
-    // Text =
-    // {
-    //     "-- Simple Lua program placeholder",
-    //     "print( 'Hello,Lua!' )",
-    //     "",
-    //     " -- Function to add two numbers",
-    //     "",
-    //     "function addNumbers(a, b)",
-    //     "   return a + b",
-    //     "end",
-    //     "",
-    //     "-- Example usage",
-    //     "local num1 = 5",
-    //     "local num2 = 10",
-    //     "",
-    //     "print(addNumbers(num1, num2))",
-    //     "",
-    //     "if num1 > num3 and num1 == 5 then",
-    //     "   print(\"WOWIE\" + ', ' + \"a 'string'\")",
-    //     "end",
-    //     "",
-    //     "more text \"word before --  \\n comment \\r \\ \"",
-    //     "",
-    //     "a = 5",
-    //     "a = math.random()",
-    //     "math.randomus()",
-    //     "() ((()))  ([([()])])   ([)]   ())",
-    // };
+    Text =
+    {
+        "-- Simple Lua program placeholder",
+        "print( 'Hello,Lua!' )",
+        "",
+        " -- Function to add two numbers",
+        "",
+        "function addNumbers(a, b)",
+        "   return a + b",
+        "end",
+        "",
+        "-- Example usage",
+        "local num1 = 5",
+        "local num2 = 10",
+        "",
+        "print(addNumbers(num1, num2))",
+        "",
+        "if num1 > num3 and num1 == 5 then",
+        "   print(\"WOWIE\" + ', ' + \"a 'string'\")",
+        "end",
+        "",
+        "more text \"word before --  \\n comment \\r \\ \"",
+        "",
+        "a = 5",
+        "a = math.random()",
+        "math.randomus()",
+        "() ((()))  ([([()])])   ([)]   ())",
+    };
 
     current_line_size = Text[0].length();
     filesize = Text.size();
 }
 
 
-bool Field::InputLoop()
+std::array<char, 16> word_separators = {' ', '(', ')', '[', ']', '{', '}', ',', '"', '\'', '<', '>', ';', '!', '/', '\\'};
+auto wbegin = word_separators.begin();
+auto wend = word_separators.end();
+
+
+bool Field::InputLoop(float deltatime)
 {
     update_field = false;
+
+
+    //modes
+    bool word_mode = false;
+    bool seceltion_mode = false;
 
     tasks.clear();
     /*
@@ -69,8 +84,20 @@ bool Field::InputLoop()
             else if (IsKeyPressed(KEY_ENTER))     tasks.push_front(6);
             else if (IsKeyPressed(KEY_TAB))       tasks.push_front(7);
 
-            else { tasks.push_back(0); }
+            else {
+                if      (IsKeyPressedRepeat(KEY_LEFT))      tasks.push_front(1);
+                else if (IsKeyPressedRepeat(KEY_RIGHT))     tasks.push_front(2);
+                else if (IsKeyPressedRepeat(KEY_UP))        tasks.push_front(3);
+                else if (IsKeyPressedRepeat(KEY_DOWN))      tasks.push_front(4);
+                else if (IsKeyPressedRepeat(KEY_BACKSPACE)) tasks.push_front(5);
+                else if (IsKeyPressedRepeat(KEY_ENTER))     tasks.push_front(6);
+                else if (IsKeyPressedRepeat(KEY_TAB))       tasks.push_front(7);
+                else { tasks.push_back(0); }
+
+            }
         }
+
+        if ( IsKeyDown(KEY_LEFT_CONTROL) ) { word_mode = true; }
 
         switch (tasks.back())
         {
@@ -86,6 +113,12 @@ bool Field::InputLoop()
             }
             else { --cursor_x; }
             max_wanted = cursor_x;
+
+            if (word_mode and cursor_x != 0 and cursor_x != current_line_size)
+            {
+                if (std::find(wbegin, wend, Text[cursor_y][cursor_x]) == wend ) { tasks.push_front(1); } //REPEAT
+                break;
+            }
             break;
         case 2:
             //KEY_RIGHT
@@ -99,6 +132,11 @@ bool Field::InputLoop()
             }
             else { ++cursor_x; }
             max_wanted = cursor_x;
+
+            if (word_mode and cursor_x != 0 and cursor_x != current_line_size)
+            {
+                if (std::find(wbegin, wend, Text[cursor_y][cursor_x]) == wend ) { tasks.push_front(2); } //REPEAT
+            }
             break;
         case 3:
             //KEY_UP
@@ -130,9 +168,17 @@ bool Field::InputLoop()
                     do
                     {
                         Text[cursor_y].erase(Text[cursor_y].begin() + --cursor_x);
-                    } while (cursor_x % TAB_SIZE != 0 and cursor_x > 0 and Text[cursor_y][cursor_x - 1] == ' ');
+                    } while ( (cursor_x != TAB_SIZE and cursor_x > 0 and Text[cursor_y][cursor_x - 1] == ' ') );
                 }
-                else { Text[cursor_y].erase(Text[cursor_y].begin() + --cursor_x); }
+                else
+                {
+                    Text[cursor_y].erase(Text[cursor_y].begin() + --cursor_x);
+                }
+
+                if (word_mode and cursor_x != 0)
+                {
+                    if (std::find(wbegin, wend, Text[cursor_y][cursor_x]) == wend ) { tasks.push_front(5); } //REPEAT
+                }
             }
             else
             {
@@ -172,6 +218,7 @@ bool Field::InputLoop()
                 //add tab after then, do
                 if (leftovers == "od" or leftovers == "neht") { space += TAB_SIZE; }
                 else if (leftovers == "dne" or leftovers == "kaerb") { space -= TAB_SIZE; }
+                else if (Text[cursor_y].substr(0, 8) == "function") { space += TAB_SIZE; }
                 leftovers = "";
 
 

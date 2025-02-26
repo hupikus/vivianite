@@ -1,15 +1,29 @@
 #include <string>
 
-#ifndef EDITOR
-#define EDITOR
-
+#include "elements/abstract/tab.h"
 #include "shared_prefs.h"
+
 #include "field_renderer.h"
 #include "field.h"
 
+#ifndef EDITOR
+#define EDITOR
 
-class Editor
+class Editor : public Tab
 {
+public:
+    Editor();
+    ~Editor() override;
+
+    static ColorSet colorTheme;
+
+    void Start() override;
+
+    void Render(size_t width, size_t height, float deltatime) override;
+    void Process(float deltatime) override;
+
+    void Abort() override;
+
 private:
     Field* field;
     FieldRenderer* renderer;
@@ -20,20 +34,6 @@ private:
     Font font;
     std::string fontName;
     float fontSize;
-
-public:
-    Editor();
-    ~Editor();
-
-    static ColorSet colorTheme;
-
-    void Init();
-
-    void Abort();
-
-
-    void Render(size_t width, size_t height);
-
 };
 
 #endif

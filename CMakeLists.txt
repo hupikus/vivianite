@@ -39,17 +39,19 @@ endif()
 add_definitions(-O3)
 
 set(SOURCES
-    src/raylib_type.cpp
+    src/structure/type/raylib_type.cpp
     src/main.cpp
     src/structure/ui_loop.cpp
     src/structure/compositor.cpp
     src/window.cpp
 
     #editor
-    src/editor.cpp
-    src/field.cpp
-    src/field_renderer.cpp
+    src/modules/code/editor.cpp
+    src/modules/code/field.cpp
+    src/modules/code/field_renderer.cpp
     )
+
+#file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS "*.cpp")
 
 
 if(PLATFORM STREQUAL "windows_x64")

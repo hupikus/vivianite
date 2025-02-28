@@ -1,4 +1,4 @@
-#include "editor.h"
+#include <cstddef>
 class Window
 {
 private:

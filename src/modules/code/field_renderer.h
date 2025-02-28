@@ -2,15 +2,14 @@
 #include <utility>
 #include <vector>
 
-#include "elements/abstract/renderer.h"
-#include "shared_prefs.h"
-#include "raylib_type.h"
+#include "../../structure/type/shared_prefs.h"
+#include "../../structure/type/raylib_type.h"
 #include "field.h"
 
 #ifndef FIELD_RENDERER
 #define FIELD_RENDERER
 
-class FieldRenderer : Renderer
+class FieldRenderer
 {
 private:
     Field& field;

@@ -1,5 +1,5 @@
 #include <raylib.h>
-#include <string>
+#include <iostream>
 
 #include "editor.h"
 
@@ -23,6 +23,7 @@ Editor::Editor()
 
 void Editor::Start()
 {
+    std::cout << "Bunny\n";
     font = LoadFontEx("assets/fonts/Menlo-Bold.ttf", 96, 0, 0);
 
     GenTextureMipmaps(&font.texture);
@@ -35,22 +36,21 @@ void Editor::Start()
 }
 
 
-void Editor::Render(size_t width, size_t height, float deltatime)
+void Editor::Render(int pos_x, int pos_y, size_t width, size_t height, float deltatime)
+{
+
+    ClearBackground(colorTheme.background);
+    BeginScissorMode(0, 0, width, height);
+    renderer->Render(0, 0, width, height);
+    EndScissorMode();
+}
+
+void Editor::Process(float deltatime)
 {
     if (field->InputLoop(deltatime)) //returns if need to update highlight
     {
         renderer->Update(field->cursor_y);
     }
-    ClearBackground(colorTheme.background);
-    BeginScissorMode(0, 0, width, height);
-    renderer->Render(0, 0, width, height);
-    EndScissorMode();
-
-
-}
-
-void Editor::Process(float deltatime)
-{
 }
 
 

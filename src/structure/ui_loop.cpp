@@ -1,7 +1,6 @@
 #include <raylib.h>
 
 #include <cstddef>
-//#include <thread>
 
 #include "ui_loop.h"
 #include "compositor.h"
@@ -14,40 +13,38 @@ UILoop::UILoop(size_t width, size_t height)
     process_pause = std::chrono::milliseconds(10);
 }
 
-void UILoop::Init()
+void UILoop::Start()
 {
     compositor->Init();
 
-    //std::thread draw(&UILoop::Render, this);
-    //std::thread process(&UILoop::Process, this);
 
-    //draw.join();
-    //process.detach();
-    Render();
+    while (!WindowShouldClose() and active)
+    {
+        Render();
+        //Process();
+    }
 
-    //CloseWindow();
+    active = false;
 }
 
 
 void UILoop::Render()
 {
-    while (!WindowShouldClose() and active)
-    {
         BeginDrawing();
 
         compositor->Render();
 
         EndDrawing();
-    }
-    active = false;
+}
+
+//empty
+void UILoop::Process()
+{
+    compositor->Process();
 }
 
 
-void UILoop::Process()
+void UILoop::Abort()
 {
-    // while (active)
-    // {
-    //     std::this_thread::sleep_for(process_pause);
-    // }
-    //active = false;
+
 }

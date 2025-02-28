@@ -1,7 +1,7 @@
 #include <string>
 
-#include "elements/abstract/tab.h"
-#include "shared_prefs.h"
+#include "../../elements/abstract/tab.h"
+#include "../../structure/type/shared_prefs.h"
 
 #include "field_renderer.h"
 #include "field.h"
@@ -19,7 +19,7 @@ public:
 
     void Start() override;
 
-    void Render(size_t width, size_t height, float deltatime) override;
+    void Render(int pos_x, int pos_y, size_t width, size_t height, float deltatime) override;
     void Process(float deltatime) override;
 
     void Abort() override;

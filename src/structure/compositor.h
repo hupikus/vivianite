@@ -2,45 +2,49 @@
 #include <vector>
 #include <memory>
 
-#include "../elements/abstract/tab.h"
-
-#include "../editor.h"
+#include "../modules/code/editor.h"
 
 #ifndef COMPOSITOR
 #define COMPOSITOR
 
-typedef struct CompositorTab
+struct Tile
 {
-    size_t id;
+    bool tab = true;
+
+    bool vertical = false;
+    float ratio = 0.5f;
+
     std::string name;
+    //Tab* instance;
     std::unique_ptr<Tab> instance;
-
-    float posx = 0.0f;
-    float posy = 0.0f;
-    float width = 1.0f;
-    float height = 1.0f;
-
-} CompositorTab;
+};
 
 
 class Compositor
 {
 public:
-    std::vector<CompositorTab> tabs;
 
     Compositor();
 
     void Init();
 
     void Render();
+    void Process();
+
+    void Abort();
 
 private:
+
     bool active = true;
 
     size_t width;
     size_t height;
 
     float deltatime;
+
+    //Panel system
+    std::vector<std::unique_ptr<Tile>> layout;
+
 };
 
 #endif

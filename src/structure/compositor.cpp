@@ -11,13 +11,24 @@ Compositor::Compositor()
 
 void Compositor::Init()
 {
-    tabs.push_back(CompositorTab{
-        .id = 0,
+    layout.emplace_back(
+    new Tile
+    {
+        .tab = true,
+        .vertical = false,
+        .ratio = 0.5f,
         .name = "Editor",
-        .instance = std::unique_ptr<Tab>(new Editor())
-        });
+        //.instance = (Tab*)(new Editor())
+        .instance = std::make_unique<Editor>()
+    });
 
-    tabs[0].instance->Start();
+    for (const auto& tab : layout)
+    {
+        if (tab->tab)
+        {
+            tab->instance->Start();
+        }
+    }
 }
 
 
@@ -29,8 +40,18 @@ void Compositor::Render()
     deltatime = GetFrameTime();
 
 
-    for (CompositorTab& tab : tabs)
+    for (const auto& tab : layout)
     {
-        tab.instance->Render(width, height, deltatime);
+        if (tab->tab)
+        {
+            const auto& instance = tab->instance;
+            instance->Render(0, 0, width, height, deltatime);
+            instance->Process(deltatime);
+        }
     }
+}
+
+void Compositor::Process()
+{
+
 }

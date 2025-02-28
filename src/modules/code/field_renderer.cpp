@@ -1,5 +1,4 @@
 #include <raylib.h>
-#include <iostream>
 
 #include <cstring>
 #include <algorithm>
@@ -9,7 +8,7 @@
 #include <array>
 
 #include "field_renderer.h"
-#include "raylib_type.h"
+#include "../../structure/type/raylib_type.h"
 #include "editor.h"
 
 #define RESERVE_WORD 31
@@ -142,7 +141,7 @@ void FieldRenderer::Render(int pos_x, int pos_y, size_t width, size_t height)
 
 
     size_t wrap_offset = 0;
-    size_t wrap_howmany_fit = (width - HORIZONTAL_MARGIN) / fontSize.x - 1;
+    size_t wrap_howmany_fit = (width - HORIZONTAL_MARGIN) / fontSize.x - 2;
 
     for (const std::string_view& line : field.Text)
     {
@@ -150,39 +149,52 @@ void FieldRenderer::Render(int pos_x, int pos_y, size_t width, size_t height)
         x = 0;
         index = 0;
 
-        check_y = VERTICAL_MARGIN + FONT_SIZE * (y + wrap_offset);
+        check_y = VERTICAL_MARGIN + FONT_SIZE * (y + wrap_offset) + field.scrollpos;
         if (check_y > height) { break; }
         check_y += pos_y;
 
-        for (auto codepoint = line.begin(); codepoint != line.end(); ++codepoint)
-        {
-            DrawTextCodepoint(font, *codepoint, Vector2{pos_x + HORIZONTAL_MARGIN + fontSize.x * x, check_y + (FONT_SIZE * wrap_offset) }, FONT_SIZE, highlight[y][index]);
-            ++x;
-            ++index;
 
-            //wrap
-            if (x > wrap_howmany_fit) { ++wrap_offset; x = 0; }
-        }
-        //Line counter
-        x = 0;
+        //line counter
         for (auto i : lines[y])
         {
             DrawTextCodepoint(counterFont, i, Vector2{pos_x + 5.0f + LINE_COUNTER_SPACING * x, check_y + ((FONT_SIZE - LINE_COUNTER_SIZE) / 2)}, LINE_COUNTER_SIZE, palette->lines);
             ++x;
         }
+
+        //text
+        x = 0;
+        for (auto codepoint = line.begin(); codepoint != line.end(); ++codepoint)
+        {
+            DrawTextCodepoint(font, *codepoint, Vector2{pos_x + HORIZONTAL_MARGIN + fontSize.x * x, check_y}, FONT_SIZE, highlight[y][index]);
+
+
+            //cursor
+            if ( y == field.cursor_y and index == field.cursor_x) { DrawRectangle(HORIZONTAL_MARGIN + fontSize.x * x, check_y, 2, FONT_SIZE, WHITE); }
+
+
+            ++x;
+            ++index;
+
+            //wrap
+            if (x > wrap_howmany_fit) {
+                check_y = VERTICAL_MARGIN + FONT_SIZE * (y + ++wrap_offset) + field.scrollpos;
+                x = 0;
+            }
+        }
+        if ( y == field.cursor_y and index == field.cursor_x) { DrawRectangle(HORIZONTAL_MARGIN + fontSize.x * x, check_y, 2, FONT_SIZE, WHITE); }
+
         ++y;
     }
 
     //cursor and selection
-    x = field.cursor_x;
-    y = field.cursor_y;
-    if (x > wrap_howmany_fit)
-    {
-        y += x / wrap_howmany_fit;
-        x %= wrap_howmany_fit;
-        --x;
-    }
-    DrawRectangle(HORIZONTAL_MARGIN + fontSize.x * x, VERTICAL_MARGIN + y * FONT_SIZE, 2, FONT_SIZE, WHITE);
+    // x = field.cursor_x;
+    // y = field.cursor_y;
+    // while (x > wrap_howmany_fit)
+    // {
+    //     ++y;
+    //     x -= wrap_howmany_fit + 1;
+    // }
+    // DrawRectangle(HORIZONTAL_MARGIN + fontSize.x * x, VERTICAL_MARGIN + y * FONT_SIZE, 2, FONT_SIZE, WHITE);
 
 }
 

@@ -13,7 +13,8 @@ class UILoop
 public:
     UILoop(size_t width, size_t height);
 
-    void Init();
+    void Start();
+    void Abort();
 
 private:
     std::unique_ptr<Compositor> compositor;

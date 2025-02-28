@@ -16,11 +16,12 @@ int main(int argc, char* argv[])
     Window* window = new Window(WIDTH, HEIGHT);
 
     UILoop loop(WIDTH, HEIGHT);
-    loop.Init();
+    loop.Start();
     //std::thread editor_process(&Editor::process, &editor);
     //editor_process.detach();
 
 
+    loop.Abort();
     delete window;
 
     return 0;

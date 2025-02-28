@@ -12,34 +12,6 @@ Field::Field(std::string filepath)
 {
     file = filepath;
     Text = {""};
-    Text =
-    {
-        "-- Simple Lua program placeholder",
-        "print( 'Hello,Lua!' )",
-        "",
-        " -- Function to add two numbers",
-        "",
-        "function addNumbers(a, b)",
-        "   return a + b",
-        "end",
-        "",
-        "-- Example usage",
-        "local num1 = 5",
-        "local num2 = 10",
-        "",
-        "print(addNumbers(num1, num2))",
-        "",
-        "if num1 > num3 and num1 == 5 then",
-        "   print(\"WOWIE\" + ', ' + \"a 'string'\")",
-        "end",
-        "",
-        "more text \"word before --  \\n comment \\r \\ \"",
-        "",
-        "a = 5",
-        "a = math.random()",
-        "math.randomus()",
-        "() ((()))  ([([()])])   ([)]   ())",
-    };
 
     current_line_size = Text[0].length();
     filesize = Text.size();
@@ -60,6 +32,8 @@ bool Field::InputLoop(float deltatime)
     bool word_mode = false;
     bool seceltion_mode = false;
 
+    float scrolldelta = 0.0f;
+
     tasks.clear();
     /*
      1: KEY_LEFT
@@ -69,6 +43,7 @@ bool Field::InputLoop(float deltatime)
      5: BACKSPACE
      6: NEWLINE
      7: TAB
+     8: SCROLL
      */
 
     //Cursor
@@ -97,7 +72,10 @@ bool Field::InputLoop(float deltatime)
             }
         }
 
-        if ( IsKeyDown(KEY_LEFT_CONTROL) ) { word_mode = true; }
+        if (IsKeyDown(KEY_LEFT_CONTROL)) { word_mode = true; }
+
+        //scrolldelta = GetMouseWheelMoveV().y;
+        //if (scrolldelta > 0.0f) tasks.push_front(8);
 
         switch (tasks.back())
         {
@@ -175,9 +153,9 @@ bool Field::InputLoop(float deltatime)
                     Text[cursor_y].erase(Text[cursor_y].begin() + --cursor_x);
                 }
 
-                if (word_mode and cursor_x != 0)
+                if (word_mode and cursor_x > 0)
                 {
-                    if (std::find(wbegin, wend, Text[cursor_y][cursor_x]) == wend ) { tasks.push_front(5); } //REPEAT
+                    if (cursor_x == 0 or std::find(wbegin, wend, Text[cursor_y][cursor_x - 1]) == wend ) { tasks.push_front(5); } //REPEAT
                 }
             }
             else
@@ -249,6 +227,10 @@ bool Field::InputLoop(float deltatime)
             //TAB
             for (int i = 0; i != TAB_SIZE; ++i) Text[cursor_y].insert(Text[cursor_y].begin() + cursor_x++, ' ');
             update_field = true;
+            break;
+        case 8:
+            //SCROLL
+            scrollpos = std::max(0.0f, std::max(scrollpos + scrolldelta, (float)filesize + 8));
             break;
         }
 

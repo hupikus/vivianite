@@ -1,5 +1,7 @@
 #include <raylib.h>
 
+#include <cstring>
+
 #include <array>
 #include <algorithm>
 
@@ -23,13 +25,41 @@ auto wbegin = word_separators.begin();
 auto wend = word_separators.end();
 
 
-bool Field::InputLoop(float deltatime)
+bool Field::InputLoop(int pos_x, int pos_y, size_t width, size_t height, float deltatime)
 {
+    //Check and set cursor
+    int mousex = GetMouseX();
+    int mousey = GetMouseY();
+
+    if (mousex > pos_x and mousex < pos_x + width and mousey > pos_y and mousey < pos_y + height)
+    {
+        if (!is_text_cursor)
+        {
+            SetMouseCursor(2);
+            is_text_cursor = true;
+        }
+    }
+    else if (is_text_cursor)
+    {
+        SetMouseCursor(0);
+        is_text_cursor = false;
+    }
+
+
+    //returned variable
     update_field = false;
 
 
+    //temp
+    int codepointByteCount = 0;
+    int codepoint;
+
+
+
     //modes
-    bool word_mode = false;
+    bool ctrl_mode = IsKeyDown(KEY_LEFT_CONTROL) or IsKeyDown(KEY_RIGHT_CONTROL);
+    bool shift_mode = IsKeyDown(KEY_LEFT_SHIFT) or IsKeyDown(KEY_RIGHT_SHIFT);
+    bool alt_mode = IsKeyDown(KEY_LEFT_ALT) or IsKeyDown(KEY_RIGHT_ALT);
     bool seceltion_mode = false;
 
     float scrolldelta = 0.0f;
@@ -46,37 +76,36 @@ bool Field::InputLoop(float deltatime)
      8: SCROLL
      */
 
-    //Cursor
+    key = GetCharPressed();
+
+    if (tasks.size() == 0)
+    {
+        if      (IsKeyPressed(KEY_LEFT))      tasks.push_front(1);
+        else if (IsKeyPressed(KEY_RIGHT))     tasks.push_front(2);
+        else if (IsKeyPressed(KEY_UP))        tasks.push_front(3);
+        else if (IsKeyPressed(KEY_DOWN))      tasks.push_front(4);
+        else if (IsKeyPressed(KEY_BACKSPACE)) tasks.push_front(5);
+        else if (IsKeyPressed(KEY_ENTER))     tasks.push_front(6);
+        else if (IsKeyPressed(KEY_TAB))       tasks.push_front(7);
+
+        else {
+            if      (IsKeyPressedRepeat(KEY_LEFT))      tasks.push_front(1);
+            else if (IsKeyPressedRepeat(KEY_RIGHT))     tasks.push_front(2);
+            else if (IsKeyPressedRepeat(KEY_UP))        tasks.push_front(3);
+            else if (IsKeyPressedRepeat(KEY_DOWN))      tasks.push_front(4);
+            else if (IsKeyPressedRepeat(KEY_BACKSPACE)) tasks.push_front(5);
+            else if (IsKeyPressedRepeat(KEY_ENTER))     tasks.push_front(6);
+            else if (IsKeyPressedRepeat(KEY_TAB))       tasks.push_front(7);
+            else { tasks.push_back(0); }
+
+        }
+    }
+
+    //scrolldelta = GetMouseWheelMoveV().y;
+    //if (scrolldelta > 0.0f) tasks.push_front(8);
+
     do
     {
-        if (tasks.size() == 0)
-        {
-            if      (IsKeyPressed(KEY_LEFT))      tasks.push_front(1);
-            else if (IsKeyPressed(KEY_RIGHT))     tasks.push_front(2);
-            else if (IsKeyPressed(KEY_UP))        tasks.push_front(3);
-            else if (IsKeyPressed(KEY_DOWN))      tasks.push_front(4);
-            else if (IsKeyPressed(KEY_BACKSPACE)) tasks.push_front(5);
-            else if (IsKeyPressed(KEY_ENTER))     tasks.push_front(6);
-            else if (IsKeyPressed(KEY_TAB))       tasks.push_front(7);
-
-            else {
-                if      (IsKeyPressedRepeat(KEY_LEFT))      tasks.push_front(1);
-                else if (IsKeyPressedRepeat(KEY_RIGHT))     tasks.push_front(2);
-                else if (IsKeyPressedRepeat(KEY_UP))        tasks.push_front(3);
-                else if (IsKeyPressedRepeat(KEY_DOWN))      tasks.push_front(4);
-                else if (IsKeyPressedRepeat(KEY_BACKSPACE)) tasks.push_front(5);
-                else if (IsKeyPressedRepeat(KEY_ENTER))     tasks.push_front(6);
-                else if (IsKeyPressedRepeat(KEY_TAB))       tasks.push_front(7);
-                else { tasks.push_back(0); }
-
-            }
-        }
-
-        if (IsKeyDown(KEY_LEFT_CONTROL)) { word_mode = true; }
-
-        //scrolldelta = GetMouseWheelMoveV().y;
-        //if (scrolldelta > 0.0f) tasks.push_front(8);
-
         switch (tasks.back())
         {
         case 1:
@@ -87,12 +116,19 @@ bool Field::InputLoop(float deltatime)
                 {
                     current_line_size = Text[--cursor_y].length();
                     cursor_x = current_line_size;
+                    cursor_visual_x = GetCodepointCount(Text[cursor_y].c_str());
                 }
             }
-            else { --cursor_x; }
+            else
+            {
+                codepoint = GetCodepointPrevious(&Text[cursor_y][cursor_x], &codepointByteCount);
+                cursor_x -= codepointByteCount;
+                if (cursor_x < 0) { cursor_x = 0; }
+                --cursor_visual_x;
+            }
             max_wanted = cursor_x;
 
-            if (word_mode and cursor_x != 0 and cursor_x != current_line_size)
+            if (ctrl_mode and cursor_x > 0 and cursor_x < current_line_size)
             {
                 if (std::find(wbegin, wend, Text[cursor_y][cursor_x]) == wend ) { tasks.push_front(1); } //REPEAT
                 break;
@@ -105,13 +141,20 @@ bool Field::InputLoop(float deltatime)
                 if (cursor_y + 1 < filesize)
                 {
                     cursor_x = 0;
+                    cursor_visual_x = 0;
                     tasks.push_front(4); //KEY_DOWN
                 }
             }
-            else { ++cursor_x; }
+            else
+            {
+                //Move to the next codepoint
+                codepoint = GetCodepoint(&Text[cursor_y][cursor_x], &codepointByteCount);
+                cursor_x += codepointByteCount;
+                ++cursor_visual_x;
+            }
             max_wanted = cursor_x;
 
-            if (word_mode and cursor_x != 0 and cursor_x != current_line_size)
+            if (ctrl_mode and cursor_x > 0 and cursor_x < current_line_size)
             {
                 if (std::find(wbegin, wend, Text[cursor_y][cursor_x]) == wend ) { tasks.push_front(2); } //REPEAT
             }
@@ -122,8 +165,9 @@ bool Field::InputLoop(float deltatime)
             {
                 current_line_size = Text[--cursor_y].length();
                 cursor_x = std::min(current_line_size, cursor_x);
+                cursor_visual_x = GetCodepointCount(Text[cursor_y].c_str());
             }
-            else { cursor_x = 0; }
+            else { cursor_x = 0; cursor_visual_x = 0; }
             break;
         case 4:
             //KEY_DOWN
@@ -131,31 +175,45 @@ bool Field::InputLoop(float deltatime)
             {
                 current_line_size = Text[++cursor_y].length();
                 cursor_x = std::min(current_line_size, cursor_x);
+                cursor_visual_x = GetCodepointCount(Text[cursor_y].c_str());
             }
             else
             {
                 cursor_x = current_line_size;
+                cursor_visual_x = GetCodepointCount(Text[cursor_y].c_str());
             }
             break;
         case 5:
             //BACKSPACE
             if (cursor_x > 0)
             {
-                if (Text[cursor_y][cursor_x - 1] == ' ')
+                GetCodepointPrevious(&Text[cursor_y][cursor_x], &codepointByteCount);
+                if (Text[cursor_y][cursor_x - codepointByteCount] == ' ')
                 {
                     do
                     {
-                        Text[cursor_y].erase(Text[cursor_y].begin() + --cursor_x);
-                    } while ( (cursor_x != TAB_SIZE and cursor_x > 0 and Text[cursor_y][cursor_x - 1] == ' ') );
+                        --cursor_visual_x;
+                        for (int i = 0; i != codepointByteCount; ++i)
+                        {
+                            Text[cursor_y].erase(Text[cursor_y].begin() + --cursor_x);
+                        }
+                        GetCodepointPrevious(&Text[cursor_y][cursor_x], &codepointByteCount);
+
+                    } while ( (cursor_x != TAB_SIZE and cursor_x > 0 and Text[cursor_y][cursor_x - codepointByteCount] == ' ') );
                 }
                 else
                 {
-                    Text[cursor_y].erase(Text[cursor_y].begin() + --cursor_x);
+                    --cursor_visual_x;
+                    for (int i = 0; i != codepointByteCount; ++i)
+                    {
+                        Text[cursor_y].erase(Text[cursor_y].begin() + --cursor_x);
+                    }
+                    GetCodepointPrevious(&Text[cursor_y][cursor_x], &codepointByteCount);
                 }
 
-                if (word_mode and cursor_x > 0)
+                if (ctrl_mode and cursor_x > 0)
                 {
-                    if (cursor_x == 0 or std::find(wbegin, wend, Text[cursor_y][cursor_x - 1]) == wend ) { tasks.push_front(5); } //REPEAT
+                    if (cursor_x == 0 or std::find(wbegin, wend, Text[cursor_y][cursor_x - codepointByteCount]) == wend ) { tasks.push_front(5); } //REPEAT
                 }
             }
             else
@@ -167,9 +225,10 @@ bool Field::InputLoop(float deltatime)
                     Text.erase(Text.begin() + cursor_y--);
 
                     cursor_x = Text[cursor_y].length();
+                    cursor_visual_x = GetCodepointCount(Text[cursor_y].c_str());
+
                     Text[cursor_y] = Text[cursor_y] + leftovers;
                     current_line_size = Text[cursor_y].length();
-
                 }
             }
             update_field = true;
@@ -218,8 +277,12 @@ bool Field::InputLoop(float deltatime)
             }
 
             Text.insert(Text.begin() + ++cursor_y, leftovers);
-            if (cursor_x != current_line_size or leftovers == "") { cursor_x = 0; }
-            else { cursor_x = leftovers.length(); }
+            if (cursor_x != current_line_size or leftovers == "") { cursor_x = 0; cursor_visual_x = 0; }
+            else
+            {
+                cursor_x = leftovers.length();
+                cursor_visual_x = GetCodepointCount(leftovers.c_str());
+            }
             update_field = true;
             }
             break;
@@ -237,12 +300,36 @@ bool Field::InputLoop(float deltatime)
         tasks.pop_back();
 
         //typing
-        key = GetCharPressed();
+        int size = 0;
 
-        if (key > 0)
+        if (ctrl_mode or alt_mode)
         {
-            Text[cursor_y].insert(Text[cursor_y].begin() + cursor_x++, key);
-            update_field = true;
+            //keycode input
+            if (ctrl_mode and not alt_mode)
+            {
+                if (IsKeyPressed(KEY_V))
+                {
+                    std::string clip = GetClipboardText();
+                    Text[cursor_y].insert(cursor_x, clip);
+                    cursor_visual_x += GetCodepointCount(clip.c_str());
+                    cursor_x += clip.length();
+                    update_field = true;
+                }
+            }
+        }
+        else if (key > 0)
+        {
+                //letter input
+                const char* utf8key = CodepointToUTF8(key, &size);
+
+                Text[cursor_y].insert(cursor_x, utf8key);
+
+                //fast ++cursor without external checks
+                codepoint = GetCodepoint(&Text[cursor_y][cursor_x], &codepointByteCount);
+                cursor_x += codepointByteCount;
+                ++cursor_visual_x;
+
+                update_field = true;
         }
 
         if (update_field)

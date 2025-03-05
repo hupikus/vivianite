@@ -22,13 +22,17 @@ private:
 public:
     Field(std::string filepath);
 
-    bool InputLoop(float deltatime);
+    bool InputLoop(int pos_x, int pos_y, size_t width, size_t height, float deltatime);
 
     std::vector<std::string> Text;
 
     size_t cursor_x = 0;
     size_t cursor_y = 0;
+    size_t cursor_visual_x = 0;
+    size_t& cursor_visual_y = cursor_y;
     float scrollpos = 0.0f;
+
+    bool is_text_cursor = false;
 };
 
 #endif

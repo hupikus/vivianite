@@ -1,5 +1,6 @@
 #include <string>
 
+#include "../../globals/resources.h"
 #include "../../elements/abstract/tab.h"
 #include "../../structure/type/shared_prefs.h"
 
@@ -20,7 +21,7 @@ public:
     void Start() override;
 
     void Render(int pos_x, int pos_y, size_t width, size_t height, float deltatime) override;
-    void Process(float deltatime) override;
+    void Input(int pos_x, int pos_y, size_t width, size_t height, float deltatime) override;
 
     void Abort() override;
 
@@ -31,7 +32,7 @@ private:
     bool active = false;
 
     //prefs
-    Font font;
+    Font& font = baseFont;
     std::string fontName;
     float fontSize;
 };

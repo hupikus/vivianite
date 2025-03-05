@@ -1,7 +1,11 @@
+#include <raylib.h>
+
 #include <string>
 #include <vector>
+#include <array>
 #include <memory>
 
+#include "../globals/colors.h"
 #include "../modules/code/editor.h"
 
 #ifndef COMPOSITOR
@@ -9,7 +13,7 @@
 
 struct Tile
 {
-    bool tab = true;
+    bool tab = false;
 
     bool vertical = false;
     float ratio = 0.5f;
@@ -17,6 +21,7 @@ struct Tile
     std::string name;
     //Tab* instance;
     std::unique_ptr<Tab> instance;
+    std::array<std::unique_ptr<Tile>, 2> layout = {nullptr, nullptr};
 };
 
 
@@ -39,11 +44,23 @@ private:
 
     size_t width;
     size_t height;
-
     float deltatime;
 
     //Panel system
-    std::vector<std::unique_ptr<Tile>> layout;
+    std::unique_ptr<Tile> root_tile;
+
+
+    void chroot(std::unique_ptr<Tile>& root, int posx, int posy, size_t width, size_t height, bool start);
+
+    //input handler
+    std::unique_ptr<Tile>* focus_tile = nullptr;
+
+    int click_x, click_y = 0;
+    bool click = false;
+
+
+    //Render special
+    Color& inactive = inactiveColor;
 
 };
 

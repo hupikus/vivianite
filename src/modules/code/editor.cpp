@@ -1,5 +1,4 @@
 #include <raylib.h>
-#include <iostream>
 
 #include "editor.h"
 
@@ -23,8 +22,6 @@ Editor::Editor()
 
 void Editor::Start()
 {
-    std::cout << "Bunny\n";
-    font = LoadFontEx("assets/fonts/Menlo-Bold.ttf", 96, 0, 0);
 
     GenTextureMipmaps(&font.texture);
     fontSize = (float)font.baseSize;
@@ -32,22 +29,19 @@ void Editor::Start()
     field = new Field("");
 
 
-    renderer = new FieldRenderer(*field, "assets/fonts/Menlo-Bold.ttf");
+    renderer = new FieldRenderer(*field);
 }
 
 
 void Editor::Render(int pos_x, int pos_y, size_t width, size_t height, float deltatime)
 {
-
-    ClearBackground(colorTheme.background);
-    BeginScissorMode(0, 0, width, height);
-    renderer->Render(0, 0, width, height);
-    EndScissorMode();
+    DrawRectangle(pos_x, pos_y, width, height, colorTheme.background);
+    renderer->Render(pos_x, pos_y, width, height);
 }
 
-void Editor::Process(float deltatime)
+void Editor::Input(int pos_x, int pos_y, size_t width, size_t height, float deltatime)
 {
-    if (field->InputLoop(deltatime)) //returns if need to update highlight
+    if (field->InputLoop(pos_x, pos_y, width, height, deltatime)) //returns if need to update highlight
     {
         renderer->Update(field->cursor_y);
     }

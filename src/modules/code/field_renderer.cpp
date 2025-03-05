@@ -7,6 +7,8 @@
 #include <string_view>
 #include <array>
 
+#include "../../globals/resources.h"
+
 #include "field_renderer.h"
 #include "../../structure/type/raylib_type.h"
 #include "editor.h"
@@ -72,6 +74,7 @@ std::array<std::array<std::string, 25>, 9> builtins = {{
 }};
 
 
+
 // FieldRenderer::~FieldRenderer()
 // {
 //     //Why segfault
@@ -87,15 +90,14 @@ void FieldRenderer::Update(size_t FromLine)
     GenText(0);
 }
 
-FieldRenderer::FieldRenderer(Field& active_field, const char* code_font) : field(active_field)
+FieldRenderer::FieldRenderer(Field& active_field) : field(active_field)
 {
-    font = LoadFontEx(code_font, FONT_SIZE, 0, 0);
     counterFont = LoadFontEx("assets/fonts/Roboto_Condensed-Black.ttf", LINE_COUNTER_SIZE, 0, 0);
 
     SetTextLineSpacing(FONT_SIZE);
     fontSize = MeasureTextEx(font, " ", FONT_SIZE, FONT_SIZE);
 
-    SetTextureFilter(font.texture, TEXTURE_FILTER_BILINEAR);
+
     SetTextureFilter(counterFont.texture, TEXTURE_FILTER_BILINEAR);
 
 
@@ -134,8 +136,8 @@ FieldRenderer::FieldRenderer(Field& active_field, const char* code_font) : field
 void FieldRenderer::Render(int pos_x, int pos_y, size_t width, size_t height)
 {
     //code
-    size_t x = 0;
-    size_t y = 0;
+    int x = 0;
+    int y = 0;
     size_t index = 0;
     float check_y = 0.0f;
 
@@ -143,7 +145,9 @@ void FieldRenderer::Render(int pos_x, int pos_y, size_t width, size_t height)
     size_t wrap_offset = 0;
     size_t wrap_howmany_fit = (width - HORIZONTAL_MARGIN) / fontSize.x - 2;
 
-    for (const std::string_view& line : field.Text)
+    int codepointByteCount = 0;
+
+    for (const std::string& line : field.Text)
     {
         //Code
         x = 0;
@@ -163,13 +167,20 @@ void FieldRenderer::Render(int pos_x, int pos_y, size_t width, size_t height)
 
         //text
         x = 0;
-        for (auto codepoint = line.begin(); codepoint != line.end(); ++codepoint)
-        {
-            DrawTextCodepoint(font, *codepoint, Vector2{pos_x + HORIZONTAL_MARGIN + fontSize.x * x, check_y}, FONT_SIZE, highlight[y][index]);
 
+        int size = TextLength(line.c_str());
+
+
+        for (int line_iter = 0; line_iter < size; )
+        {
+
+            int codepoint = GetCodepoint(&line[line_iter], &codepointByteCount);
+
+
+            DrawTextCodepoint(font, codepoint, Vector2{pos_x + HORIZONTAL_MARGIN + fontSize.x * x, check_y}, FONT_SIZE, highlight[y][index]);
 
             //cursor
-            if ( y == field.cursor_y and index == field.cursor_x) { DrawRectangle(HORIZONTAL_MARGIN + fontSize.x * x, check_y, 2, FONT_SIZE, WHITE); }
+            if ( y == field.cursor_visual_y and index == field.cursor_visual_x) { DrawRectangle(pos_x + HORIZONTAL_MARGIN + fontSize.x * x, check_y, 2, FONT_SIZE, WHITE); }
 
 
             ++x;
@@ -180,15 +191,17 @@ void FieldRenderer::Render(int pos_x, int pos_y, size_t width, size_t height)
                 check_y = VERTICAL_MARGIN + FONT_SIZE * (y + ++wrap_offset) + field.scrollpos;
                 x = 0;
             }
+
+            line_iter += codepointByteCount; //move to the next codepoint
         }
-        if ( y == field.cursor_y and index == field.cursor_x) { DrawRectangle(HORIZONTAL_MARGIN + fontSize.x * x, check_y, 2, FONT_SIZE, WHITE); }
+        if ( y == field.cursor_visual_y and index == field.cursor_visual_x) { DrawRectangle(pos_x + HORIZONTAL_MARGIN + fontSize.x * x, check_y, 2, FONT_SIZE, WHITE); }
 
         ++y;
     }
 
     //cursor and selection
-    // x = field.cursor_x;
-    // y = field.cursor_y;
+    // x = field.cursor_visual_x;
+    // y = field.cursor_visual_y;
     // while (x > wrap_howmany_fit)
     // {
     //     ++y;

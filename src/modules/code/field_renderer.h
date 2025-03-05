@@ -2,6 +2,8 @@
 #include <utility>
 #include <vector>
 
+#include "../../globals/resources.h"
+
 #include "../../structure/type/shared_prefs.h"
 #include "../../structure/type/raylib_type.h"
 #include "field.h"
@@ -14,7 +16,7 @@ class FieldRenderer
 private:
     Field& field;
 
-    Font font;
+    Font& font = baseFont;
     Font counterFont;
 
     float scale = 100.0f;
@@ -36,7 +38,7 @@ private:
     void DrawLine();
 
 public:
-    FieldRenderer(Field& field, const char* code_font);
+    FieldRenderer(Field& field);
 
 
     void Render(int pos_x, int pos_y, size_t width, size_t height);

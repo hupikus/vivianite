@@ -22,7 +22,6 @@ Window::Window(int window_width, int window_height)
     SetWindowMinSize(MIN_WIDTH, MIN_HEIGHT);
     SetTargetFPS(240);
     SetExitKey(0);
-
 }
 
 Window::~Window()

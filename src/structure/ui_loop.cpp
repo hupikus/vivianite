@@ -20,8 +20,12 @@ void UILoop::Start()
 
     while (!WindowShouldClose() and active)
     {
+        BeginDrawing();
+
+        Process();
         Render();
-        //Process();
+
+        EndDrawing();
     }
 
     active = false;
@@ -30,14 +34,9 @@ void UILoop::Start()
 
 void UILoop::Render()
 {
-        BeginDrawing();
-
-        compositor->Render();
-
-        EndDrawing();
+    compositor->Render();
 }
 
-//empty
 void UILoop::Process()
 {
     compositor->Process();

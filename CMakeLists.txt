@@ -39,6 +39,11 @@ endif()
 add_definitions(-O3)
 
 set(SOURCES
+    src/globals/resources.cpp
+    src/globals/colors.cpp
+
+
+
     src/structure/type/raylib_type.cpp
     src/main.cpp
     src/structure/ui_loop.cpp

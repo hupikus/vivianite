@@ -11,21 +11,14 @@ Compositor::Compositor()
         new Tile
         {
             .vertical = false,
-            .ratio = 0.7f,
+            .ratio = 0.5f,
         });
 }
 
 void Compositor::Init()
 {
 
-    root_tile->layout[1] = std::unique_ptr<Tile>(
-        new Tile
-        {
-            .vertical = true,
-            .ratio = 0.3f,
-        });
-
-    root_tile->layout[0] = std::unique_ptr<Tile>(
+    root_tile = std::unique_ptr<Tile>(
     new Tile
     {
         .tab = true,
@@ -34,19 +27,9 @@ void Compositor::Init()
         .instance = std::make_unique<Editor>()
     });
 
-
-    root_tile->layout[1]->layout[1] = std::unique_ptr<Tile>(
-        new Tile
-        {
-            .tab = true,
-            .name = "Editor",
-            //.instance = (Tab*)(new Editor())
-            .instance = std::make_unique<Editor>()
-        });
-
     chroot(root_tile, 0, 0, 0, 0, true);
 
-    focus_tile = &root_tile->layout[0];
+    focus_tile = &root_tile;
 }
 
 void Compositor::Process()

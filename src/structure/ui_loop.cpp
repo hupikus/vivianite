@@ -18,12 +18,29 @@ void UILoop::Start()
     compositor->Init();
 
 
+    double frametime = 1.0 / 60.0;
+
+    //DisableEventWaiting();
+
+
     while (!WindowShouldClose() and active)
     {
+
         BeginDrawing();
 
+
+
         Process();
+
         Render();
+
+
+        //PollInputEvents();
+
+        //SwapScreenBuffer();
+        //ClearBackground(BLACK);
+
+        //WaitTime(frametime);
 
         EndDrawing();
     }

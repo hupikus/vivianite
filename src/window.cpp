@@ -20,7 +20,7 @@ Window::Window(int window_width, int window_height)
     //prefs
     SetWindowIcon(LoadImage("assets/vivianite.png"));
     SetWindowMinSize(MIN_WIDTH, MIN_HEIGHT);
-    SetTargetFPS(240);
+    SetTargetFPS(60);
     SetExitKey(0);
 }
 

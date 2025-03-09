@@ -15,7 +15,6 @@ int main(int argc, char* argv[])
 {
     std::string path;
     if (argc > 2 && *argv[1] == '-' && *(argv[1] + 1) == 't') { path = argv[2]; }
-
     Window* window = new Window(WIDTH, HEIGHT);
 
 

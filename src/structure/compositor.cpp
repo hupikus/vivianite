@@ -7,17 +7,16 @@
 
 Compositor::Compositor()
 {
-    root_tile = std::unique_ptr<Tile>(
-        new Tile
-        {
-            .vertical = false,
-            .ratio = 0.5f,
-        });
+    // root_tile = std::unique_ptr<Tile>(
+    //     new Tile
+    //     {
+    //         .vertical = false,
+    //         .ratio = 0.5f,
+    //     });
 }
 
 void Compositor::Init()
 {
-
     root_tile = std::unique_ptr<Tile>(
     new Tile
     {
@@ -44,6 +43,33 @@ void Compositor::Process()
     {
         click_x = GetMouseX();
         click_y = GetMouseY();
+    }
+
+    //key process
+    keys();
+}
+
+void Compositor::keys()
+{
+    bool ctrl = IsKeyDown(KEY_LEFT_CONTROL) or IsKeyDown(KEY_RIGHT_CONTROL);
+    bool shift = IsKeyDown(KEY_LEFT_SHIFT) or IsKeyDown(KEY_RIGHT_SHIFT);
+    bool alt = IsKeyDown(KEY_LEFT_ALT) or IsKeyDown(KEY_RIGHT_ALT);
+
+
+    if( ctrl and IsKeyPressed(KEY_N))
+    {
+        //1. copy pointer
+        std::unique_ptr<Tile>* moved_tile = focus_tile;
+        //2. create new tile and pointer at its place
+        *focus_tile = std::unique_ptr<Tile>(
+            new Tile
+            {
+                .vertical = shift,
+                .ratio = 0.5f,
+                .layout = alt ?
+                std::array<std::unique_ptr<Tile>, 2> {nullptr, std::move(*moved_tile)} :
+                std::array<std::unique_ptr<Tile>, 2> {std::move(*moved_tile), nullptr}
+            });
     }
 }
 
@@ -138,7 +164,6 @@ void Compositor::chroot(std::unique_ptr<Tile>& root, int posx, int posy, size_t 
 
             chroot(tab, new_posx, new_posy, new_width, new_height, start);
         }
-
     }
 }
 

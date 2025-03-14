@@ -48,12 +48,14 @@ private:
 
     //Panel system
     std::unique_ptr<Tile> root_tile;
+    std::unique_ptr<Tile>* focus_tile;
 
 
     void chroot(std::unique_ptr<Tile>& root, int posx, int posy, size_t width, size_t height, bool start);
 
-    //input handler
-    std::unique_ptr<Tile>* focus_tile = nullptr;
+    void keys();
+
+
 
     int click_x, click_y = 0;
     bool click = false;

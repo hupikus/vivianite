@@ -53,6 +53,11 @@ void Editor::Abort()
 
 }
 
+std::unique_ptr<Tab> Editor::NewInstance()
+{
+    return std::make_unique<Editor>();
+}
+
 Editor::~Editor()
 {
     delete field;

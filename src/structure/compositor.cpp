@@ -22,7 +22,6 @@ void Compositor::Init()
     {
         .tab = true,
         .name = "Editor",
-        //.instance = (Tab*)(new Editor())
         .instance = std::make_unique<Editor>()
     });
 
@@ -51,26 +50,49 @@ void Compositor::Process()
 
 void Compositor::keys()
 {
+
     bool ctrl = IsKeyDown(KEY_LEFT_CONTROL) or IsKeyDown(KEY_RIGHT_CONTROL);
     bool shift = IsKeyDown(KEY_LEFT_SHIFT) or IsKeyDown(KEY_RIGHT_SHIFT);
     bool alt = IsKeyDown(KEY_LEFT_ALT) or IsKeyDown(KEY_RIGHT_ALT);
 
 
-    if( ctrl and IsKeyPressed(KEY_N))
+    //Tiling
+    if(IsKeyPressed(KEY_N) and ctrl)
     {
         //1. copy pointer
         std::unique_ptr<Tile>* moved_tile = focus_tile;
-        //2. create new tile and pointer at its place
+        //2.create new tab (with the same type) and start it
+        std::unique_ptr<Tile> created_tile = std::unique_ptr<Tile>(
+            new Tile
+            {
+                .tab = true,
+                .name = (*moved_tile)->name,
+                .instance = (*moved_tile)->instance->NewInstance()
+            });
+
+        created_tile->instance->Start();
+
+        //mess
+        //using TileType = std::remove_reference_t<decltype(*(created_tile->instance))>;
+        //std::unique_ptr<Tab> tab = std::make_unique<TileType>();
+        //end of the mess
+
+        //3. create new tile and fill layout
         *focus_tile = std::unique_ptr<Tile>(
             new Tile
             {
                 .vertical = shift,
                 .ratio = 0.5f,
                 .layout = alt ?
-                std::array<std::unique_ptr<Tile>, 2> {nullptr, std::move(*moved_tile)} :
-                std::array<std::unique_ptr<Tile>, 2> {std::move(*moved_tile), nullptr}
+                std::array<std::unique_ptr<Tile>, 2> {std::move(created_tile), std::move(*moved_tile)} :
+                std::array<std::unique_ptr<Tile>, 2> {std::move(*moved_tile), std::move(created_tile)}
             });
+        //4.set focus tab to the initial one
+        focus_tile = &(*focus_tile)->layout[alt];
     }
+
+    //focus
+    if(IsKeyPressed(KEY_ESCAPE)) { focus_tile = nullptr; }
 }
 
 

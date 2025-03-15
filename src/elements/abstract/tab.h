@@ -1,4 +1,5 @@
 #include <cstddef>
+#include <memory>
 
 #ifndef ANY_TAB
 #define ANY_TAB
@@ -16,6 +17,8 @@ public:
     virtual void Abort() = 0;
 
     virtual ~Tab() = default;
+
+    virtual std::unique_ptr<Tab> NewInstance() = 0;
 };
 
 #endif

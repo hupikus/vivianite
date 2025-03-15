@@ -3,6 +3,8 @@
 #include <cstring>
 #include <algorithm>
 
+#include <iostream>
+
 #include <string>
 #include <string_view>
 #include <array>
@@ -140,6 +142,8 @@ void FieldRenderer::Render(int pos_x, int pos_y, size_t width, size_t height)
     int y = 0;
     size_t index = 0;
     float check_y = 0.0f;
+
+
 
 
     size_t wrap_offset = 0;

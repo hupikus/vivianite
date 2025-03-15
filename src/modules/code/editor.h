@@ -1,4 +1,5 @@
 #include <string>
+#include <memory>
 
 #include "../../globals/resources.h"
 #include "../../elements/abstract/tab.h"
@@ -24,6 +25,8 @@ public:
     void Input(int pos_x, int pos_y, size_t width, size_t height, float deltatime) override;
 
     void Abort() override;
+
+    std::unique_ptr<Tab> NewInstance() override;
 
 private:
     Field* field;

@@ -33,6 +33,9 @@ public:
     float scrollpos = 0.0f;
 
     bool is_text_cursor = false;
+
+    //temp
+    int altcode = 0;
 };
 
 #endif

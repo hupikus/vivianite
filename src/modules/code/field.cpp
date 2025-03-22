@@ -4,11 +4,14 @@
 
 #include <array>
 #include <algorithm>
+#include <iostream>
 
 #include "field.h"
 
 
 #define TAB_SIZE 4
+
+#define HORIZONTAL_MARGIN 32.0f
 
 Field::Field(std::string filepath)
 {
@@ -25,13 +28,26 @@ auto wbegin = word_separators.begin();
 auto wend = word_separators.end();
 
 
+size_t GetByteCount(const char* text, size_t count)
+{
+    size_t byte = 0;
+    int c;
+    for (size_t i = 0; i != count; ++i)
+    {
+        GetCodepoint(text, &c);
+        byte += c;
+        text += c;
+    }
+    return byte;
+}
+
 bool Field::InputLoop(int pos_x, int pos_y, size_t width, size_t height, float deltatime)
 {
     //Check and set cursor
     int mousex = GetMouseX();
     int mousey = GetMouseY();
 
-    if (mousex > pos_x and mousex < pos_x + width and mousey > pos_y and mousey < pos_y + height)
+    if (mousex > pos_x + HORIZONTAL_MARGIN and mousex < pos_x + width and mousey > pos_y and mousey < pos_y + height)
     {
         if (!is_text_cursor)
         {
@@ -75,8 +91,6 @@ bool Field::InputLoop(int pos_x, int pos_y, size_t width, size_t height, float d
      7: TAB
      8: SCROLL
      */
-
-    key = GetCharPressed();
 
     if (tasks.size() == 0)
     {
@@ -164,8 +178,12 @@ bool Field::InputLoop(int pos_x, int pos_y, size_t width, size_t height, float d
             if (cursor_y > 0)
             {
                 current_line_size = Text[--cursor_y].length();
-                cursor_x = std::min(current_line_size, cursor_x);
-                cursor_visual_x = GetCodepointCount(Text[cursor_y].c_str());
+                //cursor_x = std::min(current_line_size, cursor_x);
+                //1. get substr 2. get codepoint count in it. Not very optimized, but who cares, happens once in a minute/second
+                //cursor_visual_x = GetCodepointCount(std::move(Text[cursor_y].substr(0, cursor_x)).c_str());
+
+                cursor_visual_x = std::min((size_t)GetCodepointCount(Text[cursor_y].c_str()), cursor_visual_x);
+                cursor_x = GetByteCount(Text[cursor_y].c_str(), cursor_visual_x);
             }
             else { cursor_x = 0; cursor_visual_x = 0; }
             break;
@@ -174,8 +192,8 @@ bool Field::InputLoop(int pos_x, int pos_y, size_t width, size_t height, float d
             if (cursor_y + 1 < filesize)
             {
                 current_line_size = Text[++cursor_y].length();
-                cursor_x = std::min(current_line_size, cursor_x);
-                cursor_visual_x = GetCodepointCount(Text[cursor_y].c_str());
+                cursor_visual_x = std::min((size_t)GetCodepointCount(Text[cursor_y].c_str()), cursor_visual_x);
+                cursor_x = GetByteCount(Text[cursor_y].c_str(), cursor_visual_x);
             }
             else
             {
@@ -199,7 +217,7 @@ bool Field::InputLoop(int pos_x, int pos_y, size_t width, size_t height, float d
                         }
                         GetCodepointPrevious(&Text[cursor_y][cursor_x], &codepointByteCount);
 
-                    } while ( (cursor_x != TAB_SIZE and cursor_x > 0 and Text[cursor_y][cursor_x - codepointByteCount] == ' ') );
+                    } while ( (cursor_x % TAB_SIZE != 0 and cursor_x > 0 and Text[cursor_y][cursor_x - codepointByteCount] == ' ') );
                 }
                 else
                 {
@@ -299,39 +317,6 @@ bool Field::InputLoop(int pos_x, int pos_y, size_t width, size_t height, float d
 
         tasks.pop_back();
 
-        //typing
-        int size = 0;
-
-        if (ctrl_mode or alt_mode)
-        {
-            //keycode input
-            if (ctrl_mode and not alt_mode)
-            {
-                if (IsKeyPressed(KEY_V))
-                {
-                    std::string clip = GetClipboardText();
-                    Text[cursor_y].insert(cursor_x, clip);
-                    cursor_visual_x += GetCodepointCount(clip.c_str());
-                    cursor_x += clip.length();
-                    update_field = true;
-                }
-            }
-        }
-        else if (key > 0)
-        {
-                //letter input
-                const char* utf8key = CodepointToUTF8(key, &size);
-
-                Text[cursor_y].insert(cursor_x, utf8key);
-
-                //fast ++cursor without external checks
-                codepoint = GetCodepoint(&Text[cursor_y][cursor_x], &codepointByteCount);
-                cursor_x += codepointByteCount;
-                ++cursor_visual_x;
-
-                update_field = true;
-        }
-
         if (update_field)
         {
             current_line_size = Text[cursor_y].length();
@@ -339,6 +324,68 @@ bool Field::InputLoop(int pos_x, int pos_y, size_t width, size_t height, float d
         }
 
     } while (tasks.size() > 0);
+    //tasks ended
+
+    //keycodes and input
+
+    key = GetCharPressed();
+
+    //alt codes
+    if (IsKeyDown(KEY_RIGHT_ALT))
+    {
+        if(key > 47 and key < 58)
+        {
+            altcode *= 10;
+            altcode += key - 48;
+
+        }
+        if (key > 0)
+        std::cout << "ALT " << key;
+    }
+    else if (IsKeyReleased(KEY_RIGHT_ALT))
+    {
+        key = altcode;
+
+        if (key > 0)
+        {
+            alt_mode = false;
+            altcode = 0;
+        }
+    }
+
+
+    //keycode input
+    if (ctrl_mode or alt_mode)
+    {
+        if (ctrl_mode and not alt_mode)
+        {
+            if (IsKeyPressed(KEY_V))
+            {
+                std::string clip = GetClipboardText();
+                Text[cursor_y].insert(cursor_x, clip);
+                cursor_visual_x += GetCodepointCount(clip.c_str());
+                cursor_x += clip.length();
+                update_field = true;
+            }
+        }
+
+    }
+    //letter input
+    else if (key > 0)
+    {
+        std::cout << key << ' ';
+        int size = 0;
+        const char* utf8key = CodepointToUTF8(key, &size);
+
+        Text[cursor_y].insert(cursor_x, utf8key);
+
+        //fast ++cursor without external checks
+        codepoint = GetCodepoint(&Text[cursor_y][cursor_x], &codepointByteCount);
+        cursor_x += codepointByteCount;
+        ++cursor_visual_x;
+
+        update_field = true;
+    }
 
     return update_field;
 }

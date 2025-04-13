@@ -1,18 +1,16 @@
-#include <raylib.h>
-
 #include "editor.h"
 
 
 #define DEBUG_FONT_SIZE 52
 
-ColorSet Editor::colorTheme
-{
-    Color{207, 255, 231, 255}, // text
-    Color{43,  35,  53,  255}, // background
-    Color{46,  105, 72,  255}, // acccent
-    Color{42,  28,  55,  255}, // shadow
-    Color{91,  97,  105, 255}, // inactive
-};
+// ColorSet Editor::colorTheme
+// {
+//     Color{207, 255, 231, 255}, // text
+//     Color{43,  35,  53,  255}, // background
+//     Color{46,  105, 72,  255}, // acccent
+//     Color{42,  28,  55,  255}, // shadow
+//     Color{91,  97,  105, 255}, // inactive
+// };
 
 Editor::Editor()
 {

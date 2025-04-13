@@ -43,6 +43,10 @@ size_t GetByteCount(const char* text, size_t count)
 
 bool Field::InputLoop(int pos_x, int pos_y, size_t width, size_t height, float deltatime)
 {
+    /*Text = {std::to_string(pos_x),std::to_string(pos_y),std::to_string(width),std::to_string(height)};
+    return true; */
+
+
     //Check and set cursor
     int mousex = GetMouseX();
     int mousey = GetMouseY();

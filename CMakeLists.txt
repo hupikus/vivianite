@@ -94,6 +94,9 @@ set(SOURCES
     src/modules/code/editor.cpp
     src/modules/code/field.cpp
     src/modules/code/field_renderer.cpp
+
+    #startscreen
+    src/modules/startscreen/startscreen.cpp
     )
 
 #file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS "*.cpp")

@@ -1,8 +1,9 @@
 #include "raylib.h"
+#include "../structure/type/shared_prefs.h"
 
 #ifndef COLORS
 #define COLORS
 
-extern Color inactiveColor;
+extern ColorSet vivianiteColorTheme;
 
 #endif

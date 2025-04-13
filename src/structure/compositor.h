@@ -1,4 +1,4 @@
-#include <raylib.h>
+#include "raylib.h"
 
 #include <string>
 #include <vector>
@@ -7,6 +7,7 @@
 
 #include "../globals/colors.h"
 #include "../modules/code/editor.h"
+#include "../modules/startscreen/startscreen.h"
 
 #ifndef COMPOSITOR
 #define COMPOSITOR
@@ -62,7 +63,7 @@ private:
 
 
     //Render special
-    Color& inactive = inactiveColor;
+    Color& inactive = vivianiteColorTheme.inactive;
 
 };
 

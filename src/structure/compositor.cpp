@@ -17,12 +17,15 @@ Compositor::Compositor()
 
 void Compositor::Init()
 {
+    width = GetRenderWidth();
+    height = GetRenderHeight();
+
     root_tile = std::unique_ptr<Tile>(
     new Tile
     {
         .tab = true,
-        .name = "Editor",
-        .instance = std::make_unique<Editor>()
+        .name = "Welcome",
+        .instance = std::make_unique<StartingScreen>()
     });
 
     chroot(root_tile, 0, 0, 0, 0, true);
@@ -32,8 +35,11 @@ void Compositor::Init()
 
 void Compositor::Process()
 {
-    width = GetRenderWidth();
-    height = GetRenderHeight();
+    if(IsWindowResized())
+    {
+        width = GetRenderWidth();
+        height = GetRenderHeight();
+    }
 
     deltatime = GetFrameTime();
 
@@ -45,7 +51,9 @@ void Compositor::Process()
     }
 
     //key process
-    keys();
+    if(!IsWindowHidden() and IsWindowFocused()) { keys(); }
+    else { focus_tile = nullptr; }
+
 }
 
 void Compositor::keys()
@@ -130,8 +138,8 @@ void Compositor::chroot(std::unique_ptr<Tile>& root, int posx, int posy, size_t 
                      {
                          focus_tile = &root;
                          SetMouseCursor(0);
+                         click = false;
                      }
-                     click = false;
                  }
             }
             else
@@ -140,7 +148,7 @@ void Compositor::chroot(std::unique_ptr<Tile>& root, int posx, int posy, size_t 
             }
         }
     }
-    else //tile
+    else //tile (tab container)
     {
         int new_posx = posx;
         int new_posy = posy;
@@ -166,7 +174,7 @@ void Compositor::chroot(std::unique_ptr<Tile>& root, int posx, int posy, size_t 
             chroot(root->layout[0], new_posx, new_posy, new_width, new_height, start);
         }
 
-        if ( !(root->ratio < 1.0f) ) return;
+        if ( !(root->ratio < 0.99f) ) return;
 
         auto& tab = root->layout[1];
 

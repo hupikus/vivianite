@@ -1,0 +1,3 @@
+title="Code Editor"
+version="0.0.7"
+head="editor.h"

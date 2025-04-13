@@ -101,13 +101,13 @@ FieldRenderer::FieldRenderer(Field& active_field) : field(active_field)
     SetTextureFilter(counterFont.texture, TEXTURE_FILTER_BILINEAR);
 
 
-    colors = &Editor::colorTheme;
+    //colors = Editor::colorTheme;
     highlight.reserve(180);
 
     render = new CodeState; //look header
 
     palette = new CodePalette{
-        .text       = colors->text,
+        .text       = colors.text,
         .comment    = Color{155, 155, 155, 255},
         .variable   = Color{138, 219, 251, 255},
         .function   = Color{249, 216, 109, 255},

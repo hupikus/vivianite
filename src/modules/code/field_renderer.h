@@ -2,6 +2,7 @@
 #include <utility>
 #include <vector>
 
+#include "../../globals/colors.h"
 #include "../../globals/resources.h"
 
 #include "../../structure/type/shared_prefs.h"
@@ -22,7 +23,8 @@ private:
     float scale = 100.0f;
 
     //customization
-    ColorSet* colors;
+    //ColorSet* colors;
+    ColorSet& colors = vivianiteColorTheme;
     struct CodePalette* palette;
     Vector2 fontSize;
 

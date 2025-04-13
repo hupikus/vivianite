@@ -1,6 +1,7 @@
 #include <string>
 #include <memory>
 
+#include "../../globals/colors.h"
 #include "../../globals/resources.h"
 #include "../../elements/abstract/tab.h"
 #include "../../structure/type/shared_prefs.h"
@@ -17,7 +18,8 @@ public:
     Editor();
     ~Editor() override;
 
-    static ColorSet colorTheme;
+    //static ColorSet colorTheme;
+
 
     void Start() override;
 
@@ -36,6 +38,7 @@ private:
 
     //prefs
     Font& font = baseFont;
+    ColorSet& colorTheme = vivianiteColorTheme;
     std::string fontName;
     float fontSize;
 };

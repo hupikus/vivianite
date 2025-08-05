@@ -1,15 +1,14 @@
+#pragma once
+
 #include <memory>
 #include <chrono>
 
 #include "compositor.h"
 
-
-
 #ifndef UILOOP
-#define UILOOP
+    #define UILOOP
 
-class UILoop
-{
+class UILoop {
 public:
     UILoop(size_t width, size_t height);
 

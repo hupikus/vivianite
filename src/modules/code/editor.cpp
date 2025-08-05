@@ -1,6 +1,5 @@
 #include "editor.h"
 
-
 #define DEBUG_FONT_SIZE 52
 
 // ColorSet Editor::colorTheme
@@ -17,19 +16,15 @@ Editor::Editor()
     active = true;
 }
 
-
 void Editor::Start()
 {
-
     GenTextureMipmaps(&font.texture);
     fontSize = (float)font.baseSize;
 
     field = new Field("");
 
-
     renderer = new FieldRenderer(*field);
 }
-
 
 void Editor::Render(int pos_x, int pos_y, size_t width, size_t height, float deltatime)
 {
@@ -39,16 +34,14 @@ void Editor::Render(int pos_x, int pos_y, size_t width, size_t height, float del
 
 void Editor::Input(int pos_x, int pos_y, size_t width, size_t height, float deltatime)
 {
-    if (field->InputLoop(pos_x, pos_y, width, height, deltatime)) //returns if need to update highlight
+    if (field->InputLoop(pos_x, pos_y, width, height, deltatime)) // returns if need to update highlight
     {
         renderer->Update(field->cursor_y);
     }
 }
 
-
 void Editor::Abort()
 {
-
 }
 
 std::unique_ptr<Tab> Editor::NewInstance()
@@ -61,7 +54,3 @@ Editor::~Editor()
     delete field;
     delete renderer;
 }
-
-
-
-

@@ -1,3 +1,5 @@
+#pragma once
+
 #include "raylib.h"
 
 #include "../../structure/type/shared_prefs.h"
@@ -5,12 +7,10 @@
 #include "../../globals/resources.h"
 #include "../../globals/colors.h"
 
-
 #ifndef STARTSCREEN
-#define STARTSCREEN
+    #define STARTSCREEN
 
-class StartingScreen : public Tab
-{
+class StartingScreen: public Tab {
 public:
     StartingScreen();
     ~StartingScreen() override;

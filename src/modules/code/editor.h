@@ -1,3 +1,5 @@
+#pragma once
+
 #include <string>
 #include <memory>
 
@@ -10,16 +12,12 @@
 #include "field.h"
 
 #ifndef EDITOR
-#define EDITOR
+    #define EDITOR
 
-class Editor : public Tab
-{
+class Editor: public Tab {
 public:
     Editor();
     ~Editor() override;
-
-    //static ColorSet colorTheme;
-
 
     void Start() override;
 
@@ -36,7 +34,7 @@ private:
 
     bool active = false;
 
-    //prefs
+    // prefs
     Font& font = baseFont;
     ColorSet& colorTheme = vivianiteColorTheme;
     std::string fontName;

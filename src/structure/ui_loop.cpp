@@ -5,7 +5,6 @@
 #include "ui_loop.h"
 #include "compositor.h"
 
-
 UILoop::UILoop(size_t width, size_t height)
 {
     compositor = std::make_unique<Compositor>();
@@ -17,37 +16,30 @@ void UILoop::Start()
 {
     compositor->Init();
 
-
     double frametime = 1.0 / 60.0;
 
-    //DisableEventWaiting();
-
+    // DisableEventWaiting();
 
     while (!WindowShouldClose() and active)
     {
-
         BeginDrawing();
-
-
 
         Process();
 
         Render();
 
+        // PollInputEvents();
 
-        //PollInputEvents();
+        // SwapScreenBuffer();
+        // ClearBackground(BLACK);
 
-        //SwapScreenBuffer();
-        //ClearBackground(BLACK);
-
-        //WaitTime(frametime);
+        // WaitTime(frametime);
 
         EndDrawing();
     }
 
     active = false;
 }
-
 
 void UILoop::Render()
 {
@@ -59,8 +51,6 @@ void UILoop::Process()
     compositor->Process();
 }
 
-
 void UILoop::Abort()
 {
-
 }

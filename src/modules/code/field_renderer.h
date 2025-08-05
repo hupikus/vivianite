@@ -1,3 +1,5 @@
+#pragma once
+
 #include <raylib.h>
 #include <utility>
 #include <vector>
@@ -10,10 +12,9 @@
 #include "field.h"
 
 #ifndef FIELD_RENDERER
-#define FIELD_RENDERER
+    #define FIELD_RENDERER
 
-class FieldRenderer
-{
+class FieldRenderer {
 private:
     Field& field;
 
@@ -22,16 +23,16 @@ private:
 
     float scale = 100.0f;
 
-    //customization
-    //ColorSet* colors;
+    // customization
+    // ColorSet* colors;
     ColorSet& colors = vivianiteColorTheme;
     struct CodePalette* palette;
     Vector2 fontSize;
 
-    //checkState
+    // checkState
     struct CodeState* render;
 
-    //cache
+    // cache
     std::vector<std::string> lines;
     std::vector<std::vector<Color>> highlight;
 
@@ -42,14 +43,12 @@ private:
 public:
     FieldRenderer(Field& field);
 
-
     void Render(int pos_x, int pos_y, size_t width, size_t height);
     void Update(size_t FromLine);
 };
 
-//Structure representing code state at given cursor position
-struct CodeState
-{
+// Structure representing code state at given cursor position
+struct CodeState {
     size_t x = 0;
     size_t y = 0;
     bool comment = false;
@@ -57,22 +56,21 @@ struct CodeState
     bool squote = false;
     bool multiline_comment = false;
 
-    //brackets () [] {}
+    // brackets () [] {}
     int brackets = 0;
 
-    //definitions
+    // definitions
     size_t awaits_name = 0;
-    //analyser
-    std::vector<std::string> vars = std::vector<std::string>(24); //1
-    std::vector<std::string> functions = std::vector<std::string>(24); //2
-    std::vector<std::string> classes = std::vector<std::string>(24); //3
+    // analyser
+    std::vector<std::string> vars = std::vector<std::string>(24);      // 1
+    std::vector<std::string> functions = std::vector<std::string>(24); // 2
+    std::vector<std::string> classes = std::vector<std::string>(24);   // 3
 
-    //functions
+    // functions
     int awaits_namespace_member = 0;
 };
 
-struct CodePalette
-{
+struct CodePalette {
     Color text;
     Color comment;
     Color variable;
@@ -91,19 +89,4 @@ struct CodePalette
     Color error;
 };
 
-
 #endif
-
-
-
-
-
-
-
-
-
-
-
-
-
-

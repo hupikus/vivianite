@@ -1,13 +1,13 @@
+#pragma once
+
 #include <cstddef>
 #include <memory>
 
 #ifndef ANY_TAB
-#define ANY_TAB
+    #define ANY_TAB
 
-class Tab
-{
+class Tab {
 public:
-
     Tab() = default;
     virtual void Start() = 0;
 

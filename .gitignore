@@ -3,3 +3,4 @@ build/*
 vivianite
 .cache
 .kateproject.build
+Makefile.example

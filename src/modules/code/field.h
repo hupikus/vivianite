@@ -1,24 +1,25 @@
+#pragma once
+
 #include <string>
 #include <vector>
 #include <deque>
 
 #ifndef FIELD
-#define FIELD
+    #define FIELD
 
-class Field
-{
+class Field {
 private:
     std::string file;
 
     size_t current_line_size = 0;
     size_t filesize = 0;
 
-
     bool update_field = false;
     int key;
     size_t max_wanted = 0;
 
     std::deque<int> tasks;
+
 public:
     Field(std::string filepath);
 
@@ -34,7 +35,7 @@ public:
 
     bool is_text_cursor = false;
 
-    //temp
+    // temp
     int altcode = 0;
 };
 

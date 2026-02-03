@@ -1,3 +1,0 @@
-title="Welcome Screen"
-version="0.0.7"
-head="startscreen.h"

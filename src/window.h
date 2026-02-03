@@ -1,21 +1,22 @@
 #pragma once
 
 #include <cstddef>
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_main.h>
 
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-
-class Window {
+class Window
+{
 private:
     size_t width, height;
 
-    GLFWwindow* window;
+    SDL_Window *window = nullptr;
+    SDL_Renderer *renderer = nullptr;
 public:
     Window(int window_width, int window_height);
 
     int Init();
 
-    int Loop();
+    void Loop();
 
     ~Window();
 };

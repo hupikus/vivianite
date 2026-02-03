@@ -6,20 +6,31 @@ PLATFORM ?= DESKTOP
 # WIN/COCOA/X11/WAYLAND
 BACKEND ?= WIN
 
+ARCH ?= x86_64
+
+# TRUE/FALSE
+UPDATE_SUBMODULES ?= FALSE
+DEBUG ?= TRUE
+
+ifeq ($(DEBUG), FALSE)
+	UPDATE_SUBMODULES = TRUE
+endif
+
 ifeq ($(PLATFORM), DESKTOP)
 	CXX ?= g++
-	CC ?= gсс
+	CC ?= gcc
 	MAKE = make
 
 	ifeq ($(OS), Windows_NT)
 		OS = WINDOWS
 		MAKE = mingw32-make
+		PROJECT_NAME := $(PROJECT_NAME).exe
 	else
 
 		UNAME=$(shell uname)
 		ifeq ($(UNAME), Linux)
 			OS = LINUX
-			BACKEND = X11
+			BACKEND ?= X11
 		endif
 		ifeq ($(findstring BSD, $(UNAME)), BSD)
 			OS = BSD
@@ -38,61 +49,62 @@ ifeq ($(PLATFORM), DESKTOP)
 	endif
 endif
 
-#-----------------------------------------------------------------------
-# Generate object names from source list.
-# All objects are stored in ./build/obj.
-# A name of object is made from source path but '\' replaced with '.'.
-# For example, src/main.cpp wil become build/obj/src.main.o
 
 BUILD_FOLDER ?= build
-OBJ_FOLDER = $(BUILD_FOLDER)/obj/
+OBJ_FOLDER = $(BUILD_FOLDER)/obj
 
 define _obj_name
-	    $(foreach src,$(1),$(OBJ_FOLDER)$(subst .c,.o,$(subst .cpp,.o,$(subst /,.,$(src)))))
+	$(patsubst src/%.c,$(OBJ_FOLDER)/%.o,$(patsubst src/%.cpp,$(OBJ_FOLDER)/%.opp,$(1)))
 endef
 
 
-# Remove 'build/obj/';
-# Replace '.' to '/';
-# Add extension to the end
-
-define _src_name
-	$(subst .,/,$(patsubst $(OBJ_FOLDER)%.o,%,$(1))).$(2)
-endef
-#-----------------------------------------------------------------------
-
-
-CCFLAGS = -Wall -O3
+CC_FLAGS = -O3
 CC_INCLUDE = -Iinclude
-CC_LINK =  -lGL -lglfw
+CC_LINK =
 
-CXXFLAGS = -Wall -O3
+CXX_FLAGS = -O3
 CXX_INCLUDE = -Iinclude
-CXX_LINK =  -lGL -lglfw -lX11
+CXX_LINK =  -lSDL3
+
+ifeq ($(DEBUG), TRUE)
+	CC_FLAGS += -Wall
+	CXX_FLAGS += -Wall
+endif
 
 
-CC_SOURCES = src/include/glad.c
+CC_SOURCES = 
 CC_OBJS = $(call _obj_name, $(CC_SOURCES))
 
 CXX_SOURCES = src/main.cpp src/window.cpp
 CXX_OBJS = $(call _obj_name, $(CXX_SOURCES))
 
 
-_objdir = "mkdir" -p $(OBJ_FOLDER)
 
-all: $(PROJECT_NAME)
+APPIMAGE_DIR = $(BUILD_FOLDER)/appimage
 
 
-$(CXX_OBJS): $(OBJ_FOLDER)%.o:
-	$(call _objdir)
-	$(CXX) $(CXXFLAGS) $(CXX_INCLUDE) -c $(call _src_name, $@,cpp) -o $@
 
-$(CC_OBJS): $(OBJ_FOLDER)%.o:
-	$(call _objdir)
-	$(CC) $(CCFLAGS) $(CC_INCLUDE) -c $(call _src_name, $@,c) -o $@
 
-$(PROJECT_NAME): $(CXX_OBJS) $(CC_OBJS)
-	$(CXX) -o $@ $^ $(CXXFLAGS) $(CXX_LINK) -D$(PLATFORM) -D$(OS) -D$(BACKEND)
+all: _submodules $(PROJECT_NAME)
+
+_submodules:
+ifeq ($(UPDATE_SUBMODULES), TRUE)
+	git submodule update --init --recursive --remote
+endif
+
+
+$(OBJ_FOLDER)/%.opp: src/%.cpp
+	@mkdir -p $(dir $@)
+	$(CXX) $(CXX_FLAGS) $(CXX_INCLUDE) -c $< -o $@
+
+$(OBJ_FOLDER)/%.o: src/%.c
+	@mkdir -p $(dir $@)
+	$(CC) $(CC_FLAGS) $(CC_INCLUDE) -c $< -o $@
+
+# Build executable
+$(PROJECT_NAME): $(CC_OBJS) $(CXX_OBJS)
+	$(CXX) -o $@ $(CXX_OBJS) $(CC_OBJS) $(CXX_FLAGS) $(CXX_LINK) -D$(PLATFORM) -D$(OS) -D$(BACKEND)
+
 
 run: all
 	./$(PROJECT_NAME)
@@ -101,14 +113,30 @@ clean:
 ifeq ($(PLATFORM), DESKTOP)
     ifeq ($(OS),WINDOWS)
 		rmdir /s /q build
-		del $(PROJECT_NAME).exe
+		del $(PROJECT_NAME)
     endif
     ifeq ($(OS), LINUX)
 		rm -rfv build/*
 		rm $(PROJECT_NAME)
     endif
     ifeq ($(OS), OSX)
-		rm -f build/*
+		rm -rf build/*
 		rm $(PROJECT_NAME)
     endif
 endif
+
+
+
+appimage: all appimage/AppRun appimage/vivianite.desktop
+	mkdir -p $(APPIMAGE_DIR)
+	mkdir -p $(APPIMAGE_DIR)/usr/share/$(PROJECT_NAME)/
+	cp -r assets $(APPIMAGE_DIR)/usr/share/vivianite/
+
+
+	cp appimage/AppRun $(APPIMAGE_DIR)/
+	cp appimage/vivianite.desktop $(APPIMAGE_DIR)/
+	cp $(PROJECT_NAME) $(APPIMAGE_DIR)/usr/share/$(PROJECT_NAME)/
+
+	appimagetool $(APPIMAGE_DIR)
+
+

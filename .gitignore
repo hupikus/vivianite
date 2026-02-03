@@ -1,6 +1,6 @@
 build/*
 !build/
 vivianite
+Vivianite-x86_64.AppImage
 .cache
 .kateproject.build
-Makefile.example

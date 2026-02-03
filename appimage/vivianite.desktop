@@ -1,0 +1,8 @@
+#!/usr/bin/env xdg-open
+[Desktop Entry]
+Categories=AudioVideoEditing;AudioVideo;Development;IDE;Utility
+Type=Application
+Name=Vivianite
+Comment=Scripting Video Editor
+Exec=vivianite
+Icon=/usr/share/vivianite/assets/icon/vivianite

@@ -1,3 +1,0 @@
-[submodule "include/OpenImageIO"]
-	path = include/OpenImageIO
-	url = https://github.com/AcademySoftwareFoundation/OpenImageIO

@@ -9,8 +9,8 @@ class Window
 private:
     size_t width, height;
 
-    SDL_Window *window = nullptr;
-    SDL_Renderer *renderer = nullptr;
+    SDL_Window *window;
+    SDL_Renderer *renderer;
 public:
     Window(int window_width, int window_height);
 

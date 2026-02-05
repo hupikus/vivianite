@@ -1,15 +1,16 @@
+#include "window.h"
+
 #include <cstddef>
-//#include <string>
-#include <cstring>
+#include <string>
 
 #include <sstream>
 #include <vector>
 #include <memory>
 
 #include <SDL3/SDL.h>
-#include <SDL3/SDL_main.h>
 
-#include "window.h"
+#include "tiling/compositor.h"
+#include "system/vivianite.h"
 
 #define MIN_WIDTH 350
 #define MIN_HEIGHT 220
@@ -45,10 +46,12 @@ int Window::Init()
 
     SDL_ShowWindow(window);
 
+
+    InitCompositor();
+
     return 0;
 }
 
-#include <unistd.h>
 void Window::Loop()
 {
     SDL_Event event;
@@ -61,11 +64,14 @@ void Window::Loop()
             case SDL_EVENT_QUIT:
                 running = false;
                 break;
+            case SDL_EVENT_WINDOW_RESIZED:
+                width = event.window.data1;
+                height = event.window.data2;
+                break;
             }
         }
 
-        SDL_SetRenderDrawColor(renderer, 38, 35, 42, 255);
-        SDL_RenderClear(renderer);
+        DrawFrame(renderer, width, height);
 
         SDL_RenderPresent(renderer);
     }
@@ -73,6 +79,8 @@ void Window::Loop()
 
 Window::~Window()
 {
+    DestroyCompositor();
+
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();

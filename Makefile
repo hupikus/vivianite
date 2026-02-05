@@ -9,7 +9,7 @@ BACKEND ?= WIN
 ARCH ?= x86_64
 
 # TRUE/FALSE
-UPDATE_SUBMODULES ?= FALSE
+UPDATE_SUBMODULES ?= TRUE
 DEBUG ?= TRUE
 
 ifeq ($(DEBUG), FALSE)
@@ -54,7 +54,7 @@ BUILD_FOLDER ?= build
 OBJ_FOLDER = $(BUILD_FOLDER)/obj
 
 define _obj_name
-	$(patsubst src/%.c,$(OBJ_FOLDER)/%.o,$(patsubst src/%.cpp,$(OBJ_FOLDER)/%.opp,$(1)))
+	$(patsubst %.c,$(OBJ_FOLDER)/%.o,$(patsubst %.cpp,$(OBJ_FOLDER)/%.opp,$(1)))
 endef
 
 
@@ -63,8 +63,8 @@ CC_INCLUDE = -Iinclude
 CC_LINK =
 
 CXX_FLAGS = -O3
-CXX_INCLUDE = -Iinclude
-CXX_LINK =  -lSDL3
+CXX_INCLUDE = -Iinclude -Isrc
+CXX_LINK = -lSDL3 -lboost_filesystem -ldl
 
 ifeq ($(DEBUG), TRUE)
 	CC_FLAGS += -Wall
@@ -75,7 +75,11 @@ endif
 CC_SOURCES = 
 CC_OBJS = $(call _obj_name, $(CC_SOURCES))
 
-CXX_SOURCES = src/main.cpp src/window.cpp
+CXX_SOURCES =  \
+	src/main.cpp src/window.cpp \
+	src/tiling/tile.cpp src/tiling/compositor.cpp \
+
+
 CXX_OBJS = $(call _obj_name, $(CXX_SOURCES))
 
 
@@ -87,17 +91,11 @@ APPIMAGE_DIR = $(BUILD_FOLDER)/appimage
 
 all: _submodules $(PROJECT_NAME)
 
-_submodules:
-ifeq ($(UPDATE_SUBMODULES), TRUE)
-	git submodule update --init --recursive --remote
-endif
-
-
-$(OBJ_FOLDER)/%.opp: src/%.cpp
+$(OBJ_FOLDER)/%.opp: %.cpp
 	@mkdir -p $(dir $@)
 	$(CXX) $(CXX_FLAGS) $(CXX_INCLUDE) -c $< -o $@
 
-$(OBJ_FOLDER)/%.o: src/%.c
+$(OBJ_FOLDER)/%.o: %.c
 	@mkdir -p $(dir $@)
 	$(CC) $(CC_FLAGS) $(CC_INCLUDE) -c $< -o $@
 
@@ -127,10 +125,28 @@ endif
 
 
 
+CC_INCLUDE += -Iinclude/json.h
+CXX_INCLUDE += -Iinclude/json.h
+_submodules: submodules_update
+
+
+submodules_update:
+ifeq ($(UPDATE_SUBMODULES), TRUE)
+	git submodule update --init --recursive --remote
+endif
+
+
+
 appimage: all appimage/AppRun appimage/vivianite.desktop
 	mkdir -p $(APPIMAGE_DIR)
 	mkdir -p $(APPIMAGE_DIR)/usr/share/$(PROJECT_NAME)/
 	cp -r assets $(APPIMAGE_DIR)/usr/share/vivianite/
+
+	mkdir -p $(APPIMAGE_DIR)/usr/lib
+	for lib in $$(ld $(CXX_LINK) --trace -w | grep '\.so' | tr '\n' ' '); do \
+		mkdir -p $(APPIMAGE_DIR)/$$(dirname $${lib}); \
+		cp $${lib} $(APPIMAGE_DIR)/$${lib}; \
+	done
 
 
 	cp appimage/AppRun $(APPIMAGE_DIR)/

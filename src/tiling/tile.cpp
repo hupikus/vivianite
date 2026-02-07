@@ -4,30 +4,26 @@
 Tile::Tile(std::string tileDlpath)
 {
     dlPath = tileDlpath;
-
-    // Load
-    dlLoaded = true;
 }
 
-Tile::Tile(std::string tileName, std::string tileDlpath)
+Tile::Tile(std::string tileName, std::string tileDlpath, bool load)
 {
     name = tileName;
     dlPath = tileDlpath;
-
-    // Load
-    dlLoaded = true;
+    if (load) DlLoad();
 }
 
 
-void Tile::Draw(SDL_Renderer *r, SDL_Rect surface)
+void Tile::Draw(SDL_Renderer *r, SDL_Rect& surface)
 {
+    //printf("draw %s.\n", name.c_str());
     if (content && drawFunc) {
+        //DlLoad();
         drawFunc(r, surface);
     } else {
         int shift = 0;
         int size = 0;
         if (first) {
-
             if (second) {
                 // Split tile if second exists
                 if (horizontal) {
@@ -65,6 +61,15 @@ void Tile::Draw(SDL_Renderer *r, SDL_Rect surface)
 
 Tile::~Tile()
 {
+    printf("destroying %s.\n", name.c_str());
+    if (destroyFunc) {
+        content = false;
+        destroyFunc();
+    }
+    if (dlLoaded) {
+        lib.reset();
+    }
     if (first) delete first;
-    if (second) delete second;}
+    if (second) delete second;
+}
 

@@ -59,12 +59,19 @@ endef
 
 
 CC_FLAGS = -O3
-CC_INCLUDE = -Iinclude
+CC_INCLUDE = -Iinclude -Isrc/system
 CC_LINK =
 
 CXX_FLAGS = -O3
-CXX_INCLUDE = -Iinclude -Isrc
-CXX_LINK = -lSDL3 -lboost_filesystem -ldl
+#ifeq ($(DEBUG), TRUE)
+#	CXX_FLAGS += -fsanitize=address
+#endif
+ifeq ($(OS), OSX)
+	CXX_FLAGS += -std=c++17
+endif
+CXX_INCLUDE = -Iinclude -Isrc -Isrc/system
+CXX_LINK = -lboost_filesystem -ldl
+CXX_LINK_SDL = -lSDL3 -lSDL3_ttf
 
 ifeq ($(DEBUG), TRUE)
 	CC_FLAGS += -Wall
@@ -77,7 +84,8 @@ CC_OBJS = $(call _obj_name, $(CC_SOURCES))
 
 CXX_SOURCES =  \
 	src/main.cpp src/window.cpp \
-	src/tiling/tile.cpp src/tiling/compositor.cpp \
+	src/tiling/dlload.cpp src/tiling/tile.cpp \
+	src/tiling/compositor.cpp src/tiling/dllfail.cpp \
 
 
 CXX_OBJS = $(call _obj_name, $(CXX_SOURCES))
@@ -87,9 +95,10 @@ CXX_OBJS = $(call _obj_name, $(CXX_SOURCES))
 APPIMAGE_DIR = $(BUILD_FOLDER)/appimage
 
 
-
+.PHONY: all clean _submodules submodules_update appimage
 
 all: _submodules $(PROJECT_NAME)
+
 
 $(OBJ_FOLDER)/%.opp: %.cpp
 	@mkdir -p $(dir $@)
@@ -101,7 +110,7 @@ $(OBJ_FOLDER)/%.o: %.c
 
 # Build executable
 $(PROJECT_NAME): $(CC_OBJS) $(CXX_OBJS)
-	$(CXX) -o $@ $(CXX_OBJS) $(CC_OBJS) $(CXX_FLAGS) $(CXX_LINK) -D$(PLATFORM) -D$(OS) -D$(BACKEND)
+	$(CXX) -o $@ $(CXX_OBJS) $(CC_OBJS) $(CXX_FLAGS) $(CXX_LINK) $(CXX_LINK_SDL) -D$(PLATFORM) -D$(OS) -D$(BACKEND)
 
 
 run: all
@@ -111,17 +120,18 @@ clean:
 ifeq ($(PLATFORM), DESKTOP)
     ifeq ($(OS),WINDOWS)
 		rmdir /s /q build
-		del $(PROJECT_NAME)
+		del $(PROJECT_NAME) || true
     endif
-    ifeq ($(OS), LINUX)
+    ifeq ($(OS), $(filter $(OS),LINUX BSD))
 		rm -rfv build/*
-		rm $(PROJECT_NAME)
+		rm $(PROJECT_NAME) || true
     endif
     ifeq ($(OS), OSX)
 		rm -rf build/*
-		rm $(PROJECT_NAME)
+		rm $(PROJECT_NAME) || true
     endif
 endif
+	@echo "make clean is not going to remove compiled modules in src/modules!"
 
 
 
@@ -132,7 +142,7 @@ _submodules: submodules_update
 
 submodules_update:
 ifeq ($(UPDATE_SUBMODULES), TRUE)
-	git submodule update --init --recursive --remote
+	git submodule update --init --recursive
 endif
 
 

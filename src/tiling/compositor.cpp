@@ -6,20 +6,20 @@ SDL_Rect rootRect {0, 0, 1, 1};
 
 void InitCompositor()
 {
-    root = new Tile("Vivianite", "modules/std/vivianite.so");
+    root = new Tile("Vivianite", "src/modules/builtin/startscreen/module.so", true);
 }
 
 void DrawFrame(SDL_Renderer *renderer, int width, int height)
 {
+    SDL_SetRenderDrawColor(renderer, 38, 35, 42, 255);
+    SDL_RenderClear(renderer);
+
+
     rootRect.w = width;
     rootRect.h = height;
     SDL_SetRenderViewport(renderer, &rootRect);
     if (root) root->Draw(renderer, rootRect);
     SDL_SetRenderViewport(renderer, &rootRect);
-
-    SDL_SetRenderDrawColor(renderer, 38, 35, 42, 255);
-    SDL_RenderClear(renderer);
-
 }
 
 void DestroyCompositor()

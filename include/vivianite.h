@@ -1,8 +1,8 @@
-#include <string>
-#include <SDL3/SDL.h>
-
 #ifndef VIVIANITE_H
 #define VIVIANITE_H
+
+#include <string>
+#include <SDL3/SDL.h>
 
 void Alert(const std::string &msg);
 
@@ -11,8 +11,8 @@ void Alert(const std::string &msg);
 
 
 // Keys
-bool isKeyPressed(int key);
+bool IsKeyPressed(int key);
 bool IsKeyDown(int key);
-bool isKeyReleased(int key);
+bool IsKeyReleased(int key);
 
 #endif

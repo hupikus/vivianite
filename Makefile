@@ -36,15 +36,15 @@ ifeq ($(PLATFORM), DESKTOP)
 			OS = BSD
 			BACKEND = X11
 
-			CXX = clang++
-			CC = clang
+			CXX := clang++
+			CC := clang
 		endif
 		ifeq ($(UNAME), Darwin)
 			OS = OSX
 			BACKEND = COCOA
 
-			CXX = clang++
-			CC = clang
+			CXX := clang++
+			CC := clang
 		endif
 	endif
 endif
@@ -59,7 +59,7 @@ endef
 
 
 CC_FLAGS = -O3
-CC_INCLUDE = -Iinclude -Isrc/system
+CC_INCLUDE = -Iinclude
 CC_LINK =
 
 CXX_FLAGS = -O3
@@ -69,7 +69,7 @@ CXX_FLAGS = -O3
 ifeq ($(OS), OSX)
 	CXX_FLAGS += -std=c++17
 endif
-CXX_INCLUDE = -Iinclude -Isrc -Isrc/system
+CXX_INCLUDE = -Iinclude -Isrc
 CXX_LINK = -lboost_filesystem -ldl
 CXX_LINK_SDL = -lSDL3 -lSDL3_ttf
 
@@ -84,6 +84,7 @@ CC_OBJS = $(call _obj_name, $(CC_SOURCES))
 
 CXX_SOURCES =  \
 	src/main.cpp src/window.cpp \
+	src/input/keys.cpp \
 	src/tiling/dlload.cpp src/tiling/tile.cpp \
 	src/tiling/compositor.cpp src/tiling/dllfail.cpp \
 

@@ -1,5 +1,3 @@
-#include "window.h"
-
 #include <cstddef>
 #include <string>
 
@@ -9,8 +7,10 @@
 
 #include <SDL3/SDL.h>
 
+#include "input/keys.h"
 #include "tiling/compositor.h"
-#include "system/vivianite.h"
+
+#include "window.h"
 
 #define MIN_WIDTH 350
 #define MIN_HEIGHT 220
@@ -59,6 +59,7 @@ void Window::Loop()
 
 
     while (running) {
+        updateKeys();
         while (SDL_PollEvent(&event)) {
             switch (event.type) {
             case SDL_EVENT_QUIT:
@@ -68,6 +69,12 @@ void Window::Loop()
                 width = event.window.data1;
                 height = event.window.data2;
                 break;
+            case SDL_EVENT_KEY_DOWN:
+                  setKey(event.key.scancode, 1);
+                  break;
+            case SDL_EVENT_KEY_UP:
+                  setKey(event.key.scancode, -1);
+                  break;
             }
         }
 

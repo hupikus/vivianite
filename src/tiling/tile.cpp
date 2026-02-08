@@ -17,8 +17,8 @@ Tile::Tile(std::string tileName, std::string tileDlpath, bool load)
 void Tile::Draw(SDL_Renderer *r, SDL_Rect& surface)
 {
     //printf("draw %s.\n", name.c_str());
+    if (IsKeyPressed(SDL_SCANCODE_R)) { DlLoad(); }
     if (content && drawFunc) {
-        //DlLoad();
         drawFunc(r, surface);
     } else {
         int shift = 0;

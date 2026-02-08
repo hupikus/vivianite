@@ -1,8 +1,9 @@
-#include "vivianite.h"
-#include "tiling/tile.h"
+#include <unistd.h>
 #include <boost/dll/import.hpp>
 #include <boost/dll/shared_library.hpp>
-#include <unistd.h>
+
+#include "vivianite.h"
+#include "tiling/tile.h"
 
 static const char *init_symbol = "_init";
 static const char *draw_symbol = "_draw";

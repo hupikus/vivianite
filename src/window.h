@@ -1,8 +1,7 @@
-#pragma once
+#ifndef WINDOW_H
+#define WINDOW_H
 
-#include <cstddef>
 #include <SDL3/SDL.h>
-#include <SDL3/SDL_main.h>
 
 class Window
 {
@@ -20,3 +19,5 @@ public:
 
     ~Window();
 };
+
+#endif

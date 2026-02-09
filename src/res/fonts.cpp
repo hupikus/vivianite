@@ -24,7 +24,7 @@ bool InitFonts()
     return true;
 }
 
-FT_Face *GetFont()
+FT_Face *GetFont(std::string name)
 {
     return &default_font;
 }
@@ -32,4 +32,9 @@ FT_Face *GetFont()
 FT_Face *GetDefaultFont()
 {
     return &default_font;
+}
+
+void DestroyFonts()
+{
+    FT_Done_FreeType(ft);
 }

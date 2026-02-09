@@ -2,5 +2,6 @@
 #define FONTS_H
 
 bool InitFonts();
+void DestroyFonts();
 
 #endif

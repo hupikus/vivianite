@@ -21,7 +21,6 @@ Window::Window(int window_width, int window_height)
 {
     width = window_width;
     height = window_height;
-    InitResources();
 }
 
 int Window::Init()
@@ -55,7 +54,8 @@ int Window::Init()
 
     SDL_ShowWindow(window);
 
-
+    // Custom init
+    InitResources();
     InitCompositor();
 
     return 0;
@@ -102,6 +102,7 @@ exit:
 Window::~Window()
 {
     DestroyCompositor();
+    DestroyResources();
 
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);

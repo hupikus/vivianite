@@ -19,7 +19,7 @@ void Tile::Draw(SDL_Renderer *r, SDL_Rect& surface)
     //printf("draw %s.\n", name.c_str());
     if (IsKeyPressed(SDL_SCANCODE_R)) { DlLoad(); }
     if (content && drawFunc) {
-        drawFunc(r, surface);
+        drawFunc(r, surface.w, surface.h);
     } else {
         int shift = 0;
         int size = 0;

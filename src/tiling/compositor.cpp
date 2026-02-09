@@ -1,5 +1,6 @@
 #include "tiling/tile.h"
 
+
 static Tile *root = nullptr;
 
 SDL_Rect rootRect {0, 0, 1, 1};

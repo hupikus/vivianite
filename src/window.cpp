@@ -7,10 +7,12 @@
 
 #include <SDL3/SDL.h>
 
+#include "window.h"
+
+#include "res/res.h"
 #include "input/keys.h"
 #include "tiling/compositor.h"
 
-#include "window.h"
 
 #define MIN_WIDTH 350
 #define MIN_HEIGHT 220
@@ -19,6 +21,7 @@ Window::Window(int window_width, int window_height)
 {
     width = window_width;
     height = window_height;
+    InitResources();
 }
 
 int Window::Init()
@@ -26,7 +29,13 @@ int Window::Init()
     if (!SDL_Init(SDL_INIT_VIDEO))
         throw std::runtime_error("Failed to initialize video.\n");
 
-    window = SDL_CreateWindow("Vivianite", width, height, SDL_WINDOW_RESIZABLE);
+    window = SDL_CreateWindow(
+        "Vivianite",
+        width,
+        height,
+              SDL_WINDOW_RESIZABLE
+            // | SDL_WINDOW_OPENGL
+        );
     if (!window)
         throw std::runtime_error("Failed to create a window.\n");
 

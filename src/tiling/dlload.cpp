@@ -9,8 +9,13 @@ static const char *init_symbol = "_init";
 static const char *draw_symbol = "_draw";
 static const char *destroy_symbol = "_destroy";
 
-typedef void (*draw_func_t)(SDL_Renderer*, SDL_Rect&);
-void dllfail(SDL_Renderer *r, SDL_Rect &surface);
+typedef void (*draw_func_t) (
+    SDL_Renderer*,
+    int width,
+    int height
+);
+
+void dllfail(SDL_Renderer *r, int width, int height);
 
 void Tile::DlLoad()
 {
@@ -32,7 +37,10 @@ void Tile::DlLoad()
 
     std::unique_ptr<boost::dll::shared_library> new_lib;
     try {
-        new_lib = std::make_unique<boost::dll::shared_library>(dlPath);
+        new_lib = std::make_unique<boost::dll::shared_library>(
+            dlPath,
+            boost::dll::load_mode::rtld_lazy
+        );
     } catch (const std::exception& e)
     {
         printf("failed to open %s: %s\n", dlPath.c_str(), e.what());

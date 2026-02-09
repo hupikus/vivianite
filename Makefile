@@ -71,7 +71,10 @@ ifeq ($(OS), OSX)
 endif
 CXX_INCLUDE = -Iinclude -Isrc
 CXX_LINK = -lboost_filesystem -ldl
-CXX_LINK_SDL = -lSDL3 -lSDL3_ttf
+CXX_LINK_SDL = -lSDL3_ttf
+
+PACKAGES = freetype2 sdl3
+PKG_LIBS = $(shell pkg-config --cflags --libs $(PACKAGES))
 
 ifeq ($(DEBUG), TRUE)
 	CC_FLAGS += -Wall
@@ -85,6 +88,7 @@ CC_OBJS = $(call _obj_name, $(CC_SOURCES))
 CXX_SOURCES =  \
 	src/main.cpp src/window.cpp \
 	src/input/keys.cpp \
+	src/res/res.cpp src/res/fonts.cpp \
 	src/tiling/dlload.cpp src/tiling/tile.cpp \
 	src/tiling/compositor.cpp src/tiling/dllfail.cpp \
 
@@ -103,7 +107,7 @@ all: _submodules $(PROJECT_NAME)
 
 $(OBJ_FOLDER)/%.opp: %.cpp
 	@mkdir -p $(dir $@)
-	$(CXX) $(CXX_FLAGS) $(CXX_INCLUDE) -c $< -o $@
+	$(CXX) $(CXX_FLAGS) $(CXX_INCLUDE) $(PKG_LIBS) -c $< -o $@
 
 $(OBJ_FOLDER)/%.o: %.c
 	@mkdir -p $(dir $@)
@@ -111,7 +115,7 @@ $(OBJ_FOLDER)/%.o: %.c
 
 # Build executable
 $(PROJECT_NAME): $(CC_OBJS) $(CXX_OBJS)
-	$(CXX) -o $@ $(CXX_OBJS) $(CC_OBJS) $(CXX_FLAGS) $(CXX_LINK) $(CXX_LINK_SDL) -D$(PLATFORM) -D$(OS) -D$(BACKEND)
+	$(CXX) -o $@ $(CXX_OBJS) $(CC_OBJS) $(CXX_FLAGS) $(CXX_LINK) $(PKG_LIBS) $(CXX_LINK_SDL) -D$(PLATFORM) -D$(OS) -D$(BACKEND)
 
 
 run: all

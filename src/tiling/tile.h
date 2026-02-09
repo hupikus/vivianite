@@ -25,7 +25,7 @@ public:
     void DlLoad();
 
     void (*initFunc)(void) = nullptr;
-    void (*drawFunc)(SDL_Renderer*,   SDL_Rect&) = nullptr;
+    void (*drawFunc)(SDL_Renderer*, const int width, const int height) = nullptr;
     void (*destroyFunc)(void) = nullptr;
 
     bool content = false;

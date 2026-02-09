@@ -15,4 +15,7 @@ bool IsKeyPressed(int key);
 bool IsKeyDown(int key);
 bool IsKeyReleased(int key);
 
+// Resources
+bool IsFontLoaded(const std::string &path, int size);
+
 #endif

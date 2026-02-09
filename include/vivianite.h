@@ -3,6 +3,8 @@
 
 #include <string>
 #include <SDL3/SDL.h>
+#include <ft2build.h>
+#include FT_FREETYPE_H
 
 void Alert(const std::string &msg);
 
@@ -17,5 +19,8 @@ bool IsKeyReleased(int key);
 
 // Resources
 bool IsFontLoaded(const std::string &path, int size);
+
+FT_Face *GetDefaultFont();
+FT_Face *GetFont();
 
 #endif

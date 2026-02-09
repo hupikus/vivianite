@@ -118,7 +118,7 @@ $(PROJECT_NAME): $(CC_OBJS) $(CXX_OBJS)
 	$(CXX) -o $@ $(CXX_OBJS) $(CC_OBJS) $(CXX_FLAGS) $(CXX_LINK) $(PKG_LIBS) $(CXX_LINK_SDL) -D$(PLATFORM) -D$(OS) -D$(BACKEND)
 
 
-run: all
+run: $(PROJECT_NAME)
 	./$(PROJECT_NAME)
 
 clean:

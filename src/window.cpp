@@ -83,6 +83,10 @@ void Window::Loop()
                   break;
             case SDL_EVENT_KEY_UP:
                   setKey(event.key.scancode, -1);
+                  // Temporary
+                  if (event.key.scancode == SDL_SCANCODE_ESCAPE) {
+                      goto exit;
+                  }
                   break;
             }
         }
@@ -91,6 +95,8 @@ void Window::Loop()
 
         SDL_RenderPresent(renderer);
     }
+exit:
+    return;
 }
 
 Window::~Window()

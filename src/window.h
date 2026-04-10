@@ -15,6 +15,8 @@ public:
 
     int Init();
 
+    void Resize(int width, int height);
+
     void Loop();
 
     ~Window();

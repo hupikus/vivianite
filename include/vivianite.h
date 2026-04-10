@@ -6,21 +6,23 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
-void Alert(const std::string &msg);
+extern void Alert(const std::string &msg);
 
 // No Config!
-//Config *read_config(Tile *tile, const std::string)
+//extern Config *read_config(Tile *tile, const std::string)
 
 
 // Keys
-bool IsKeyPressed(int key);
-bool IsKeyDown(int key);
-bool IsKeyReleased(int key);
+extern bool IsKeyPressed(int key);
+extern bool IsKeyDown(int key);
+extern bool IsKeyReleased(int key);
 
 // Resources
-bool IsFontLoaded(const std::string &path, int size);
+extern bool IsFontLoaded(const std::string &path, int size);
 
-FT_Face *GetDefaultFont();
-FT_Face *GetFont();
+extern FT_Face *GetDefaultFont(void);
+extern FT_Face *GetFont(void);
 
-#endif
+extern void SetRenderFont(const FT_Face);
+
+#endif // VIVIANITE_H

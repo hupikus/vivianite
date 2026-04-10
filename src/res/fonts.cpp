@@ -1,40 +1,36 @@
 #include "vivianite.h"
 #include "fonts.h"
 
-#include <ft2build.h>
-#include FT_FREETYPE_H
-#include FT_MULTIPLE_MASTERS_H
-
 FT_Library ft;
-
-#define DEFAULT_FONT_PATH "assets/fonts/Menlo.ttf"
-FT_Face default_font;
-
+FT_Face *default_font;
+FT_Face *render_font;
 
 bool InitFonts()
 {
     FT_Init_FreeType(&ft);
 
     // Default font
-    if (FT_New_Face(ft, DEFAULT_FONT_PATH, 0, &default_font)) {
-        printf("Could not find the default font.\n");
+    if (FT_New_Face(ft, DEFAULT_FONT_PATH, 0, default_font)) {
+        printf("Could not load the default font.\n");
         return false;
     }
+
+    render_font = default_font;
 
     return true;
 }
 
-FT_Face *GetFont(std::string name)
+FT_Face *GetFont(std::string name) { return render_font; } // Yet
+
+FT_Face *GetDefaultFont(void) { return default_font; }
+
+void SetRenderFont(FT_Face *font)
 {
-    return &default_font;
+    if (!font) return;
+    render_font = font;
 }
 
-FT_Face *GetDefaultFont()
-{
-    return &default_font;
-}
-
-void DestroyFonts()
+void DestroyFonts(void)
 {
     FT_Done_FreeType(ft);
 }

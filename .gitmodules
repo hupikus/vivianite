@@ -1,3 +1,6 @@
 [submodule "include/json.h"]
 	path = include/json.h
 	url = https://github.com/sheredom/json.h
+[submodule "include/clay"]
+	path = include/clay
+	url = https://github.com/nicbarker/clay

@@ -62,7 +62,7 @@ CC_FLAGS = -O3
 CC_INCLUDE = -Iinclude
 CC_LINK =
 
-CXX_FLAGS = -O3
+CXX_FLAGS = -O3 -export-dynamic
 #ifeq ($(DEBUG), TRUE)
 #	CXX_FLAGS += -fsanitize=address
 #endif
@@ -70,10 +70,11 @@ ifeq ($(OS), OSX)
 	CXX_FLAGS += -std=c++17
 endif
 CXX_INCLUDE = -Iinclude -Isrc
-CXX_LINK = -lboost_filesystem -ldl
+CXX_LINK = -ldl #-lboost_filesystem
 CXX_LINK_SDL = -lSDL3_ttf
 
 PACKAGES = freetype2 sdl3
+PKG_LIBS_INCLUDE = $(shell pkg-config --cflags-only-I $(PACKAGES))
 PKG_LIBS = $(shell pkg-config --cflags --libs $(PACKAGES))
 
 ifeq ($(DEBUG), TRUE)
@@ -89,8 +90,8 @@ CXX_SOURCES =  \
 	src/main.cpp src/window.cpp \
 	src/input/keys.cpp \
 	src/res/res.cpp src/res/fonts.cpp \
-	src/tiling/dlload.cpp src/tiling/tile.cpp \
-	src/tiling/compositor.cpp src/tiling/dllfail.cpp \
+	src/tiling/compositor.cpp src/tiling/tile.cpp \
+	src/dl/dlload.cpp src/dl/dllfail.cpp \
 
 
 CXX_OBJS = $(call _obj_name, $(CXX_SOURCES))
@@ -107,7 +108,7 @@ all: _submodules $(PROJECT_NAME)
 
 $(OBJ_FOLDER)/%.opp: %.cpp
 	@mkdir -p $(dir $@)
-	$(CXX) $(CXX_FLAGS) $(CXX_INCLUDE) $(PKG_LIBS) -c $< -o $@
+	$(CXX) $(CXX_FLAGS) $(CXX_INCLUDE) $(PKG_LIBS_INCLUDE) -c $< -o $@
 
 $(OBJ_FOLDER)/%.o: %.c
 	@mkdir -p $(dir $@)

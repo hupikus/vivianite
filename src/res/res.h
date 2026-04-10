@@ -1,7 +1,7 @@
 #ifndef RES_H
 #define RES_H
 
-bool InitResources();
-void DestroyResources();
+bool InitResources(void);
+void DestroyResources(void);
 
-#endif
+#endif //RES_H

@@ -67,7 +67,7 @@ Tile::~Tile()
         destroyFunc();
     }
     if (dlLoaded) {
-        lib.reset();
+        dlclose(handle);
     }
     if (first) delete first;
     if (second) delete second;

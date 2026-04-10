@@ -9,7 +9,8 @@
 class Tile
 {
 private:
-    std::unique_ptr<boost::dll::shared_library> lib;
+    //std::unique_ptr<boost::dll::shared_library> lib;
+    void *handle = NULL;
 public:
 
     Tile();

@@ -2,8 +2,12 @@
 
 #include "fonts.h"
 
-bool InitResources()
+bool InitResources(void)
 {
     return InitFonts();
 }
 
+void DestroyResources(void)
+{
+    DestroyFonts();
+}

@@ -4,6 +4,7 @@
 
 bool InitResources(void)
 {
+
     return InitFonts();
 }
 

@@ -23,7 +23,7 @@ typedef struct Glyph
 typedef struct GlyphAtlas
 {
     size_t width, height;
-    char *data;
+    unsigned char *data;
 } GlyphAtlas;
 
 #endif // FONT_ATLAS_H

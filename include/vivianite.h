@@ -20,8 +20,8 @@ extern bool IsKeyReleased(int key);
 // Resources
 extern bool IsFontLoaded(const std::string &path, int size);
 
-extern FT_Face *GetDefaultFont(void);
-extern FT_Face *GetFont(void);
+extern FT_Face GetDefaultFont(void);
+extern FT_Face GetFont(void);
 
 extern void SetRenderFont(const FT_Face);
 

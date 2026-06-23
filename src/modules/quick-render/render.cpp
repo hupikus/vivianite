@@ -1,4 +1,3 @@
-#define VIVIANITE_FT
 #include "vivianite.h"
 
 #include <memory>
@@ -22,30 +21,27 @@ extern "C" void tile_init()
 
 extern "C" void tile_draw(SDL_Renderer *r, int w, int h)
 {
-    // SDL_SetRenderDrawColor(r, 45, 35, 155, 255);
-    // SDL_RenderFillRect(r, NULL);
+	int size = 32;
+	int x = 0;
+	int y = 0;
+	// const char *fontfile = "/home/sipuchiy/cyth/vivianite/assets/fonts/Menlo.ttf";
+	// const char *text = "HIIIIIIIIIIIIIII:3";
+	SDL_RenderFillRect(r, new (const SDL_FRect){w*0.25f, h*0.25f, w*0.75f, h*0.75f});
 
-    int size = 32;
-    int x = 0;
-    int y = 0;
-    // const char *fontfile = "/home/sipuchiy/cyth/vivianite/assets/fonts/Menlo.ttf";
-    // const char *text = "HIIIIIIIIIIIIIII:3";
-    //SDL_RenderFillRect(r, new (const SDL_FRect){w*0.25f, h*0.25f, w*0.75f, h*0.75f});
+	float scale = (float)w * 0.9f / (float)(26*8);
+	SDL_SetRenderScale(r, scale, scale);
+	SDL_SetRenderDrawColor(r, 255, 255, 255, 255);
 
-    float scale = (float)w * 0.9f / (float)(26*8);
-    // SDL_SetRenderScale(r, scale, scale);
-    SDL_SetRenderDrawColor(r, 255, 255, 255, 255);
+        /*
+	SDL_RenderDebugText(
+		r,
+		(w * 0.05f) / scale,
+		(h / 2.0f - 4.0f * scale) / scale,
+		DEBUG_TEXT
+	);
+    */
+	render_text(r);
 
-    SDL_RenderDebugText(
-	    r,
-	    0,
-	    0,
-	    DEBUG_TEXT
-    );
-    //render_text(r);
-
-    // SDL_RenderClear(r);
-    // SDL_SetRenderScale(r, 1.0f, 1.0f);
  }
 
 extern "C" void tile_destroy()
@@ -72,12 +68,11 @@ struct atlas {
     unsigned int width, height;
 
     unsigned char *data = NULL;
-};
+}
 
 
 unsigned int get_width()
 {
-    return 0;
 }
 
 atlas *create_atlas(FT_Face face, const char *string)
@@ -99,16 +94,16 @@ atlas *create_atlas(FT_Face face, const char *string)
     FT_Load_Char(face, c, FT_LOAD_RENDER);
     FT_Bitmap* bitmap = &face->glyph->bitmap;
 
-    a->width = (unsigned int)(bitmap->width);
-    a->height = (unsigned int)(bitmap->rows);
-    a->data = (unsigned char*)(malloc(a->width * a->height));
+    b->width = (int)(bitmap->width);
+    b->height = (int)(bitmap->rows);
+    a->bits = (unsigned char*)(malloc(a->width * a->height));
 
 
-    printf("%i\n", a->width);
+    printf("%i\n", b->width);
 
 
 
-    return a;
+    return b;
 }
 
 void destroy_atlas(atlas *b)
@@ -128,7 +123,7 @@ void render_text(SDL_Renderer *renderer)
         return;
     }
 
-    atlas *bm = create_atlas(font, "I BEGEG");
+    bitmap *bm = create_bitmap(font, "I BEGEG");
 
 
     FT_UInt glyph_index = FT_Get_Char_Index( font, 'a' );

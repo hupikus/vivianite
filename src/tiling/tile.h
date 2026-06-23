@@ -9,7 +9,6 @@
 class Tile
 {
 private:
-    //std::unique_ptr<boost::dll::shared_library> lib;
     void *handle = NULL;
 public:
 
@@ -34,6 +33,7 @@ public:
 
     Tile *first = nullptr;
     Tile *second = nullptr;
+    std::vector<Tile *> children = {0};
 
     double ratio = 0.5;
     bool horizontal = true;

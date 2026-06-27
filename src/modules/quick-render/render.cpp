@@ -59,13 +59,13 @@ void render() {
     while (textProg == 4) {
 	SDL_SetRenderTarget(r, t);
 
-	SDL_SetRenderDrawColor(r, 45, 35, 155, 255);
+	SDL_SetRenderDrawColor(r, 145, 35, 155 - (frame_count / 3), 255);
 	SDL_RenderFillRect(r, NULL);
 
 
 	{
-	    rect.x = cx + cosf(frame_count / 20.0f) * radius + sinf(frame_count / 180.0f) * -50.0f;
-	    rect.y = cy + sinf(frame_count / 20.0f) * radius * 1.3f;
+	    rect.x = cx + cosf(frame_count / 20.0f * M_PI) * radius - 15.0f;
+	    rect.y = cy + sinf(frame_count / 20.0f * M_PI) * radius * 1.3f;
 
 	    SDL_SetRenderDrawColor(r, 255, 255, 255, 255);
 	    SDL_RenderFillRect(r, &rect);

@@ -84,6 +84,7 @@ void Tile::DlLoad()
     }
 
     printf("Module %s's draw function loaded as %p\n", name.c_str(), drawFunc);
+    initFunc();
 
 }
 #else

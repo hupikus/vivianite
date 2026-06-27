@@ -6,13 +6,13 @@
 TTF_Font *font = TTF_OpenFont("assets/fonts/Menlo.ttf", 48);
 void dllfail(SDL_Renderer *r, int w, int h)
 {
-    float scale = (float)w * 0.9f / (float)(22*8);
-    SDL_SetRenderScale(r, scale, scale);
-    SDL_SetRenderDrawColor(r, 255, 255, 255, 255);
+    SDL_SetRenderDrawColor(r, 42, 35, 36, 255);
+    SDL_RenderFillRect(r, NULL);
+
+    SDL_SetRenderDrawColor(r, 255, 23, 25, 255);
     SDL_RenderDebugText(
         r,
-        (w * 0.05f) / scale,
-        (h / 2.0f - 4.0f * scale) / scale,
+        0, 0,
         "Failed to load plugin."
     );
 }

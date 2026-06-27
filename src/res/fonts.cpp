@@ -1,3 +1,4 @@
+#define VIVIANITE_FT
 #include "vivianite.h"
 #include "fonts.h"
 

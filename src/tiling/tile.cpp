@@ -80,7 +80,6 @@ void Tile::Draw(SDL_Renderer *r, SDL_Rect &surface)
 
 Tile::~Tile()
 {
-    printf("destroying %s.\n", name.c_str());
     if (destroyFunc) {
         content = false;
         destroyFunc();
@@ -90,5 +89,6 @@ Tile::~Tile()
     }
     if (first) delete first;
     if (second) delete second;
+    printf("destroying %s.\n", name.c_str());
 }
 

@@ -1,3 +1,5 @@
+#include "vivianite.h"
+
 #include <cstddef>
 #include <string>
 

@@ -11,7 +11,7 @@ void InitCompositor()
 {
     root = new Tile();
 
-    Tile *startscreen = new Tile("Vivianite", "src/modules/builtin/startscreen/module.so", true);
+    Tile *startscreen = new Tile("Vivianite", "src/modules/quick-render/module.so", true);
     Tile *buffer = new Tile("Buffer view", "src/modules/builtin/buffer/module.so", true);
 
     root->ratio = 0.5;

@@ -92,6 +92,7 @@ CXX_SOURCES =  \
 	src/res/res.cpp src/res/fonts.cpp \
 	src/tiling/compositor.cpp src/tiling/tile.cpp \
 	src/dl/dlload.cpp src/dl/dllfail.cpp \
+	src/render/video.cpp src/render/frame.cpp \
 
 
 CXX_OBJS = $(call _obj_name, $(CXX_SOURCES))

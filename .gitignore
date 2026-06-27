@@ -5,3 +5,5 @@ Vivianite-x86_64.AppImage
 .cache
 .kateproject.build
 module.so
+output.mp4
+*.mp4

@@ -40,8 +40,10 @@ extern "C" void tile_init()
 }
 
 
+int frame_delay = 1;
 int frame_count = 0;
 const int frame_target = 360;
+const int max_frames = 40;
 
 void render() {
     const float cx = (float)specs.width / 2.0f;
@@ -49,14 +51,11 @@ void render() {
     const float radius = 300.0f;
     const float size = 100.0f;
 
-    SDL_FRect rect = {
-	0,
-	0,
-	size,
-	size
-    };
+    SDL_FRect rect = {0, 0, size, size};
 
-    while (textProg == 4) {
+    int cr_frames = 0;
+
+    while (textProg == 5 && cr_frames++ <= max_frames) {
 	SDL_SetRenderTarget(r, t);
 
 	SDL_SetRenderDrawColor(r, 145, 35, 155 - (frame_count / 3), 255);
@@ -81,7 +80,7 @@ void render() {
 
 	if (frame_count++ >= frame_target) {
 	    EndRender(video);
-	    textProg = 5;
+	    textProg = 6;
 	}
     }
 }
@@ -111,12 +110,16 @@ extern "C" void tile_draw(SDL_Renderer *renderer, int w, int h)
     } else if (textProg == 3) {
 	if (frame_count++ >= 260) {
 	    frame_count = 0;
-	    textProg = 4;
+	    textProg = 5;
 	}
-    } else if (textProg == 4) {
-	render();
     } else if (textProg == 5) {
 	snprintf(percentage, 64, "Rendering is done by %f%%.", ((float)frame_count / (float)frame_target * 100.0f));
+	if (frame_delay <= 0) {
+	    render();
+	    frame_delay = 1;
+	} else {
+	    frame_delay -= 1;
+	}
     }
 
  }

@@ -43,7 +43,7 @@ extern "C" void tile_init()
 int frame_delay = 1;
 int frame_count = 0;
 const int frame_target = 360;
-const int max_frames = 40;
+const int max_frames = 2;
 
 void render() {
     const float cx = (float)specs.width / 2.0f;

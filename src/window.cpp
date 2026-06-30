@@ -58,7 +58,11 @@ int Window::Init()
 
     // Custom init
     InitResources();
-    InitCompositor();
+
+    if (window_root == NULL)
+        InitCompositor();
+    else
+        InitCompositorRoot(window_root);
 
     return 0;
 }

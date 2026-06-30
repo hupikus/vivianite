@@ -11,6 +11,8 @@ private:
     SDL_Window *window;
     SDL_Renderer *renderer;
 public:
+    const char *window_root = NULL;
+
     Window(int window_width, int window_height);
 
     int Init();

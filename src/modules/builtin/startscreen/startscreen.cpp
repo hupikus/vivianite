@@ -17,7 +17,7 @@ extern "C" void tile_init()
 {
 }
 
-#define DEBUG_TEXT "Not failed to load plugin."
+#define DEBUG_TEXT "Welcome to Vivianite."
 
 
 extern "C" void tile_draw(SDL_Renderer *r, int w, int h)

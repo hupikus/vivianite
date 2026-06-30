@@ -56,6 +56,13 @@ void render() {
     int cr_frames = 0;
 
     while (textProg == 5 && cr_frames++ <= max_frames) {
+
+	// Clean surface before
+	if (s != NULL) {
+	    SDL_DestroySurface(s);
+	    s = NULL;
+	}
+
 	SDL_SetRenderTarget(r, t);
 
 	SDL_SetRenderDrawColor(r, 145, 35, 155 - (frame_count / 3), 255);
@@ -74,7 +81,6 @@ void render() {
 
 	s = SDL_RenderReadPixels(r, NULL);
 	SendFrame(video, s->pixels);
-	SDL_DestroySurface(s);
 
 	SDL_SetRenderTarget(r, NULL);
 
@@ -83,6 +89,9 @@ void render() {
 	    textProg = 6;
 	}
     }
+
+    SDL_Texture *t = SDL_CreateTextureFromSurface(r, s);
+    SendRenderPreview(video, t);
 }
 
 extern "C" void tile_draw(SDL_Renderer *renderer, int w, int h)

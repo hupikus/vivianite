@@ -69,6 +69,11 @@ extern void SendAudio(videoCache *video, void *samples);
 extern void EndRender(videoCache *video);
 extern void CancelRender(videoCache *video);
 
+//Temporary
+extern videoCache *GetActiveJob(void);
+extern void SendRenderPreview(videoCache *video, SDL_Texture *t);
+extern SDL_Texture *GetRenderPreview(videoCache *video);
+
 // Video Cache definitions
 typedef struct pipe_data {
 	int pid;
@@ -84,6 +89,9 @@ struct videoCache {
 	size_t frames;
 
 	bool rendering;
+
+	// Temporary
+	SDL_Texture *frame_preview;
 };
 
 #endif // VIVIANITE_H

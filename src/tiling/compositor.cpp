@@ -9,9 +9,16 @@ static bool update_dll = false;
 
 void InitCompositor()
 {
+    if (root) delete root;
+    root = new Tile("Vivianite", "src/modules/builtin/startscreen/module.so", true);
+}
+
+void InitCompositorRoot(const char *root_path)
+{
+    if (root) delete root;
     root = new Tile();
 
-    Tile *startscreen = new Tile("Vivianite", "src/modules/quick-render/module.so", true);
+    Tile *startscreen = new Tile("Vivianite", root_path, true);
     Tile *buffer = new Tile("Buffer view", "src/modules/builtin/buffer/module.so", true);
 
     root->ratio = 0.5;

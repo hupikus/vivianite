@@ -20,6 +20,7 @@ typedef struct jobs {
 } jobs;
 
 videoCache *current_job = NULL;
+videoCache *GetActiveJob(void) { return current_job; }
 
 videoCache *InitVideo(videoSpecs specs)
 {
@@ -147,6 +148,17 @@ void SendFrame(videoCache *video, void *frame)
 
     ++video->frames;
 }
+
+void SendRenderPreview(videoCache *video, SDL_Texture *t)
+{
+    if (video->frame_preview) {
+        SDL_DestroyTexture(video->frame_preview);
+    }
+    video->frame_preview = t;
+}
+
+SDL_Texture *GetRenderPreview(videoCache *video) { return video->frame_preview; }
+
 
 void SendAudio(videoCache *video, void *samples)
 {

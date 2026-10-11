@@ -1,4 +1,6 @@
 #include "tiling/tile.h"
+
+#include <dlfcn.h>
 #include <SDL3/SDL.h>
 
 Tile::Tile() {}
@@ -69,7 +71,7 @@ void Tile::Draw(SDL_Renderer *r, SDL_Rect &surface)
 
             SDL_SetRenderViewport(r, &secondRect);
 
-            // We need to preserve surface's original position
+            // We need to preserve rect's global position
             // Because we set clip rect in global coordinates.
             // Instead of trying to guess tile draw order.
 
@@ -77,7 +79,7 @@ void Tile::Draw(SDL_Renderer *r, SDL_Rect &surface)
             int old_y = secondRect.y;
             secondRect.x = 0;
             secondRect.y = 0;
-`
+
             SDL_SetRenderClipRect(r, &secondRect);
 
             secondRect.x = old_x;

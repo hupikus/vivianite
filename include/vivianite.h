@@ -23,6 +23,8 @@ extern bool IsKeyReleased(int key);
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
+#define DEFAULT_FONT_PATH "assets/fonts/Menlo.ttf"
+
 extern FT_Face LoadFont(const std::string &path);
 extern bool IsFontLoaded(const std::string &path);
 

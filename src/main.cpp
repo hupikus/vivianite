@@ -4,14 +4,15 @@
 #include <unistd.h>
 #include <limits.h>
 #include <string.h>
+
 #include "window.h"
+#include "tiling/compositor.h"
 
 #include "argparse.h"
 
 #define WIDTH 900
 #define HEIGHT 600
 
-#define DEFAULT_STARTSCREEN_MODULE "src/modules/builtin/startscreen/module.so"
 
 void exe_path(void)
 {
@@ -50,8 +51,10 @@ int main(int argc, char* argv[])
 
     if (args.root) {
         main_window->window_root = strdup(argv[2]);
+        main_window->cli_render_mode = true;
     } else {
-        main_window->window_root = strdup(DEFAULT_STARTSCREEN_MODULE);
+        main_window->window_root = strdup(STARTSCREEN_MODULE);
+        main_window->cli_render_mode = false;
     }
 
     if (main_window->Init()) { return 1; }

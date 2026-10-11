@@ -1,7 +1,9 @@
 #include "vivianite.h"
+
 #include <stdbool.h>
-#include <string.h>
 #include <memory.h>
+#include <vector>
+#include <string.h>
 
 #ifndef TILE_H
 #define TILE_H

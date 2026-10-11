@@ -1,9 +1,10 @@
+#define VIVIANITE_FT
 #include "vivianite.h"
 #include <stdio.h>
 #include <SDL3/SDL.h>
 #include <SDL3_ttf/SDL_ttf.h>
 
-TTF_Font *font = TTF_OpenFont("assets/fonts/Menlo.ttf", 48);
+TTF_Font *font = TTF_OpenFont(DEFAULT_FONT_PATH, 48);
 void dllfail(SDL_Renderer *r, int w, int h)
 {
     SDL_SetRenderDrawColor(r, 42, 35, 36, 255);

@@ -1,8 +1,11 @@
 #include "vivianite.h"
 #include "keys.h"
+
 #include <SDL3/SDL.h>
 
 static int keys[SDL_SCANCODE_COUNT] = {0};
+
+// Public
 
 bool IsKeyDown(int key)
 {
@@ -22,6 +25,7 @@ bool IsKeyReleased(int key)
 }
 
 // Private
+
 void setKey(int key, int value)
 {
     keys[key] = value;

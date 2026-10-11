@@ -65,7 +65,7 @@ int Window::Init()
     InitResources();
 
     assert(window_root != NULL);
-    InitCompositor(window_root);
+    InitCompositor(window_root, cli_render_mode);
 
     return 0;
 }

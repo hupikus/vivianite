@@ -24,18 +24,21 @@ videoCache *GetActiveJob(void) { return current_job; }
 
 videoCache *InitVideo(videoSpecs specs)
 {
-    if (specs.width == 0 || specs.height == 0 || specs.frame_rate <= 0.0f) return NULL;
+    if (specs.width == 0 || specs.height == 0 || specs.frame_rate <= 0.0f) { return NULL; }
 
-    if (specs.channels > 1)
+    if (specs.channels > 1) {
         fprintf(stderr,
             "Channels value %zu: "
             "support for value higher than 1 is not implemented.\n",
             specs.channels
         );
-    if (specs.channels <= 0) specs.channels = 1;
+    }
 
-    if (specs.save_frames)
-        fprintf(stderr, "Saving frames is not implemented.\n");
+    if (specs.channels <= 0) { specs.channels = 1; }
+
+    if (specs.save_frames) {
+        fprintf(stderr, "Warning: saving frames is not implemented.\n");
+    }
 
     videoCache *video = new videoCache();
 
@@ -160,22 +163,21 @@ void SendRenderPreview(videoCache *video, SDL_Texture *t)
 SDL_Texture *GetRenderPreview(videoCache *video) { return video->frame_preview; }
 
 
-void SendAudio(videoCache *video, void *samples)
-{
-
-}
+void SendAudio(videoCache *video, void *samples) {}
 
 void CancelRender(videoCache *video)
 {
-    if (video == NULL) return;
+    if (video == NULL) { return; }
     video->rendering = false;
     current_job = NULL;
 
     if (video->ffmpeg != NULL) {
-        if (video->ffmpeg->pipe != 0)
+        if (video->ffmpeg->pipe != 0) {
             close(video->ffmpeg->pipe);
-        if (video->ffmpeg->pid != 0)
+        }
+        if (video->ffmpeg->pid != 0) {
             kill(video->ffmpeg->pid, SIGINT);
+        }
         free(video->ffmpeg);
     }
 

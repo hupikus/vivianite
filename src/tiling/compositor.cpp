@@ -11,7 +11,7 @@ static bool update_dll = false;
 
 void InitCompositor(const char *root_path)
 {
-    if (root) delete root;
+    if (root) { delete root; }
     root = new Tile();
 
     Tile *startscreen = new Tile("Vivianite", root_path, true);
@@ -32,7 +32,7 @@ void DrawFrame(SDL_Renderer *renderer, int width, int height)
 
     rootRect.w = width;
     rootRect.h = height;
-    if (root) root->Draw(renderer, rootRect);
+    if (root) { root->Draw(renderer, rootRect); }
 
     update_dll = false;
 
@@ -40,5 +40,5 @@ void DrawFrame(SDL_Renderer *renderer, int width, int height)
 
 void DestroyCompositor()
 {
-    if (root) delete root;
+    if (root) { delete root; }
 }

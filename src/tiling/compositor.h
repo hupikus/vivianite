@@ -1,8 +1,8 @@
 #ifndef COMPOSITOR_H
 #define COMPOSITOR_H
 
-#define STARTSCREEN_MODULE "src/modules/builtin/startscreen/module.so"
-#define BUFFER_VIEW_MODULE "src/modules/builtin/buffer/module.so"
+#define STARTSCREEN_MODULE "modules/builtin/startscreen/module.so"
+#define BUFFER_VIEW_MODULE "modules/builtin/buffer/module.so"
 
 #include "tiling/tile.h"
 #include <SDL3/SDL.h>

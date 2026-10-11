@@ -18,7 +18,7 @@ void InitCompositor(const char *root_path)
     Tile *buffer = new Tile("Buffer view", BUFFER_VIEW_MODULE, true);
 
     root->ratio = 0.5;
-    // root->horizontal = false;
+    root->horizontal = false;
 
     root->first = startscreen;
     root->second = buffer;
@@ -32,11 +32,7 @@ void DrawFrame(SDL_Renderer *renderer, int width, int height)
 
     rootRect.w = width;
     rootRect.h = height;
-    // SDL_SetRenderViewport(renderer, &rootRect);
     if (root) root->Draw(renderer, rootRect);
-
-    
-    //SDL_SetRenderViewport(renderer, &rootRect);
 
     update_dll = false;
 

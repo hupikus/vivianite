@@ -1,7 +1,7 @@
 #include "vivianite.h"
-#include <string>
-#include <boost/dll/shared_library.hpp>
-#include <memory>
+#include <stdbool.h>
+#include <string.h>
+#include <memory.h>
 
 #ifndef TILE_H
 #define TILE_H
@@ -24,15 +24,15 @@ public:
 
     void DlLoad();
 
-    void (*initFunc)(void) = nullptr;
-    void (*drawFunc)(SDL_Renderer*, const int width, const int height) = nullptr;
-    void (*destroyFunc)(void) = nullptr;
+    void (*initFunc)(void) = NULL;
+    void (*drawFunc)(SDL_Renderer*, const int width, const int height) = NULL;
+    void (*destroyFunc)(void) = NULL;
 
     bool content = false;
     void Draw(SDL_Renderer* r, SDL_Rect& surface);
 
-    Tile *first = nullptr;
-    Tile *second = nullptr;
+    Tile *first = NULL;
+    Tile *second = NULL;
     std::vector<Tile *> children = {0};
 
     double ratio = 0.5;
@@ -40,4 +40,4 @@ public:
 
     ~Tile();
 };
-#endif
+#endif // TILE_H

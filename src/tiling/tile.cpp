@@ -18,7 +18,7 @@ Tile::Tile(std::string tileName, std::string tileDlpath, bool load)
 
 void Tile::Draw(SDL_Renderer *r, SDL_Rect &surface)
 {
-    // printf("draw %s: %i, %i, %i, %i\n", name.c_str(), surface.w, surface.h, surface.x, surface.y);
+    //printf("draw %s: %i, %i, %i, %i\n", name.c_str(), surface.w, surface.h, surface.x, surface.y);
     if (IsKeyPressed(SDL_SCANCODE_R)) { DlLoad(); }
     if (content && drawFunc) {
         drawFunc(r, surface.w, surface.h);
@@ -29,19 +29,22 @@ void Tile::Draw(SDL_Renderer *r, SDL_Rect &surface)
             SDL_SetRenderClipRect(r, NULL);
             SDL_SetRenderViewport(r, NULL);
 
+            // Set viewport rect;
+            // In its coordinates, clip the viewport.
+            // Order matters.
+
+            SDL_SetRenderViewport(r, &firstRect);
+            SDL_SetRenderClipRect(r, &firstRect);
 
             if (horizontal) {
                 firstRect.w *= ratio;
             } else {
                 firstRect.h *= ratio;
             }
-            
-            // Set viewport rect
-            // In its coordinates set clip
-            // Order matters
 
-            SDL_SetRenderViewport(r, &firstRect);
-            SDL_SetRenderClipRect(r, &firstRect);
+            firstRect.x = 0;
+            firstRect.y = 0;
+            
 
             first->Draw(r, firstRect);
         }
@@ -57,19 +60,28 @@ void Tile::Draw(SDL_Renderer *r, SDL_Rect &surface)
             if (horizontal) {
                 int shift = secondRect.w * ratio;
                 secondRect.w -= shift;
-                secondRect.x += shift;
+                secondRect.x = shift;
             } else {
                 int shift = secondRect.h * ratio;
                 secondRect.h -= shift;
-                secondRect.y += shift;
+                secondRect.y = shift;
             }
 
-            // Have position 0 rect, becuase SetRenderClip works in Viewport coordinates
-            firstRect = secondRect;
-            firstRect.x = 0;
-            firstRect.y = 0;
             SDL_SetRenderViewport(r, &secondRect);
-            SDL_SetRenderClipRect(r, &firstRect);
+
+            // We need to preserve surface's original position
+            // Because we set clip rect in global coordinates.
+            // Instead of trying to guess tile draw order.
+
+            int old_x = secondRect.x;
+            int old_y = secondRect.y;
+            secondRect.x = 0;
+            secondRect.y = 0;
+`
+            SDL_SetRenderClipRect(r, &secondRect);
+
+            secondRect.x = old_x;
+            secondRect.y = old_y;
 
             second->Draw(r, secondRect);
         }

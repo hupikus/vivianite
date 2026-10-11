@@ -87,7 +87,7 @@ CC_SOURCES =
 CC_OBJS = $(call _obj_name, $(CC_SOURCES))
 
 CXX_SOURCES =  \
-	src/main.cpp src/window.cpp \
+	src/main.cpp src/argparse.cpp src/window.cpp \
 	src/input/keys.cpp \
 	src/res/res.cpp src/res/fonts.cpp \
 	src/tiling/compositor.cpp src/tiling/tile.cpp \

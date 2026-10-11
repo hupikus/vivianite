@@ -4,8 +4,7 @@
 #ifndef COMPOSITOR_H
 #define COMPOSITOR_H
 
-void  InitCompositor();
-void  InitCompositorRoot(const char *root_path);
+void  InitCompositor(const char *root_path);
 void  DrawFrame(SDL_Renderer *renderer, int width, int height);
 void  DestroyCompositor();
 

@@ -1,5 +1,6 @@
 #include "tiling/tile.h"
 
+#define BUFFER_VIEW_MODULE "src/modules/builtin/buffer/module.so"
 
 static Tile *root = nullptr;
 
@@ -7,19 +8,14 @@ SDL_Rect rootRect {0, 0, 1, 1};
 
 static bool update_dll = false;
 
-void InitCompositor()
-{
-    if (root) delete root;
-    root = new Tile("Vivianite", "src/modules/builtin/startscreen/module.so", true);
-}
 
-void InitCompositorRoot(const char *root_path)
+void InitCompositor(const char *root_path)
 {
     if (root) delete root;
     root = new Tile();
 
     Tile *startscreen = new Tile("Vivianite", root_path, true);
-    Tile *buffer = new Tile("Buffer view", "src/modules/builtin/buffer/module.so", true);
+    Tile *buffer = new Tile("Buffer view", BUFFER_VIEW_MODULE, true);
 
     root->ratio = 0.5;
     // root->horizontal = false;

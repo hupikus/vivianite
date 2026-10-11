@@ -6,9 +6,12 @@
 #include <string.h>
 #include "window.h"
 
+#include "argparse.h"
 
 #define WIDTH 900
 #define HEIGHT 600
+
+#define DEFAULT_STARTSCREEN_MODULE "src/modules/builtin/startscreen/module.so"
 
 void exe_path(void)
 {
@@ -36,25 +39,25 @@ int main(int argc, char* argv[])
 {
     exe_path();
 
-    if (argc >= 2 && (strcmp(argv[1], "--help") == 0 || (strcmp(argv[1], "-h") == 0))) {
-        printf(
-            "-h, --help                 Print this message\n"
-            "-r, --root {PATH}          Use given .so plugin as window root\n"
-        );
+    struct Args args = argparse(argc, argv);
+    if (args.help) {
+        printf(HelpMessage);
         return 0;
     }
 
-    Window* window = new Window(WIDTH, HEIGHT);
-    if (argc >= 3 && (strcmp(argv[1], "--root") == 0 || (strcmp(argv[1], "-r") == 0))) {
-        window->window_root = strdup(argv[2]);
+
+    Window* main_window = new Window(WIDTH, HEIGHT);
+
+    if (args.root) {
+        main_window->window_root = strdup(argv[2]);
+    } else {
+        main_window->window_root = strdup(DEFAULT_STARTSCREEN_MODULE);
     }
 
-    if (window->Init()) {
-        return 1;
-    }
-    window->Loop();
+    if (main_window->Init()) { return 1; }
+    main_window->Loop();
 
-    delete window;
+    delete main_window;
 
     return 0;
 }

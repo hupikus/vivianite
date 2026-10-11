@@ -94,9 +94,9 @@ CXX_SOURCES =  \
 	src/dl/dlload.cpp src/dl/dllfail.cpp \
 	src/render/video.cpp src/render/frame.cpp \
 
+FILE_COUNT = $(words $(CXX_SOURCES))
 
 CXX_OBJS = $(call _obj_name, $(CXX_SOURCES))
-
 
 
 APPIMAGE_DIR = $(BUILD_FOLDER)/appimage
@@ -106,10 +106,14 @@ APPIMAGE_DIR = $(BUILD_FOLDER)/appimage
 
 all: _submodules $(PROJECT_NAME)
 
+COMPILED_FILES =
 
 $(OBJ_FOLDER)/%.opp: %.cpp
+	@$(eval COMPILED_FILES += $<)
+	@$(eval COMPILED_FILES_COUNT = $(words $(COMPILED_FILES)))
+	@printf "[$(COMPILED_FILES_COUNT)/$(FILE_COUNT)] "
 	@mkdir -p $(dir $@)
-	$(CXX) $(CXX_FLAGS) $(CXX_INCLUDE) $(PKG_LIBS_INCLUDE) -c $< -o $@
+	$(CXX) $(CXX_FLAGS) $(CXX_INCLUDE) $(PKG_LIBS_INCLUDE) -c $< -o $@ -D$(PLATFORM) -D$(OS) -D$(BACKEND)
 
 $(OBJ_FOLDER)/%.o: %.c
 	@mkdir -p $(dir $@)
@@ -117,7 +121,8 @@ $(OBJ_FOLDER)/%.o: %.c
 
 # Build executable
 $(PROJECT_NAME): $(CC_OBJS) $(CXX_OBJS)
-	$(CXX) -o $@ $(CXX_OBJS) $(CC_OBJS) $(CXX_FLAGS) $(CXX_LINK) $(PKG_LIBS) $(CXX_LINK_SDL) -D$(PLATFORM) -D$(OS) -D$(BACKEND)
+	@printf "[Linking] $(CXX) -o $@ \$$(CXX_OBJS) $(CXX_FLAGS) $(CXX_LINK) $(PKG_LIBS) $(CXX_LINK_SDL)\n"
+	@$(CXX) -o $@ $(CXX_OBJS) $(CC_OBJS) $(CXX_FLAGS) $(CXX_LINK) $(PKG_LIBS) $(CXX_LINK_SDL)
 
 
 run: $(PROJECT_NAME)

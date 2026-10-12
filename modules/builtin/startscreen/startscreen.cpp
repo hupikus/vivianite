@@ -5,7 +5,6 @@
 
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_surface.h>
-// #include <boost/dll/alias.hpp>
 
 #include <ft2build.h>
 #include FT_FREETYPE_H

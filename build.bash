@@ -12,16 +12,11 @@ NAME="vivianite"
 SELECTED=0
 RESP=""
 
-# print, read line and return
-ask() {
-    prompt=$1
-    var=$2
 
-    printf '%s' "$prompt"
-    IFS= read -r answer || answer=
-
-    eval "$var=\$answer"
-}
+JOBS=0
+if [[ "$*" == *"--jobs"* ]]; then
+    JOBS=1
+fi
 
 # profile directory
 if [ ! -d "$PROFILES_FOLDER" ]; then
@@ -128,7 +123,7 @@ case "$RESP" in
         ;;
 esac
 
-if [ "$SELECTED" -ne 1 ]; then
+if [[ "$SELECTED" != 1 ]]; then
     echo "Build profile not selected."
     exit 1
 fi
@@ -137,6 +132,15 @@ echo
 printf 'Selected %s\n' "$NAME"
 printf 'Builds folder: %s\n' "$BUILD_PATH"
 printf 'Current build folder: %s\n' "$APP_PATH"
+
+if [[ "$DEBUG" == 1 ]]; then
+    echo "DEBUG: ON"
+fi
+
+if [[ "$JOBS" == 1 ]]; then
+    echo "JOBS: ON"
+fi
+
 printf 'Correct? [Y/n] '
 
 IFS= read -r RESP || RESP=
@@ -155,8 +159,13 @@ mkdir -p "$LOCAL_BUILD_PATH" || exit 1
 (
     autoreconf -i
     cd "$LOCAL_BUILD_PATH" || exit 1
-    $SCRIPT_DIR/configure 
-    make
+    $SCRIPT_DIR/configure
+
+    if [[ "$JOBS" == 1 ]]; then
+        make -j
+    else
+        make
+    fi
 
     echo "Copying assets..."
     cd ..

@@ -6,7 +6,7 @@ OBJDIR = $(BUILDDIR)
 
 AM_CPPFLAGS = \
     -I$(abs_top_srcdir)/include \
-    -I$(abs_top_srcdir)/src \
+-I$(abs_top_srcdir)/src \
     -I$(abs_top_srcdir)/src/include \
     $(DEPS_CFLAGS)
 
@@ -31,7 +31,6 @@ CXX_SRC = \
 	src/dl/dlload.cpp src/dl/dllfail.cpp \
 	src/render/video.cpp src/render/frame.cpp
 
-SRC_COUNT = $(words $(CXX_SRC))
 
 
 CC_OBJS = $(patsubst %.c,$(OBJDIR)/%.o,$(CC_SRC))
@@ -40,17 +39,15 @@ CXX_OBJS = $(patsubst %.cpp,$(OBJDIR)/%.o,$(CXX_SRC))
 vivianite_SOURCES = $(CXX_SRC)
 override vivianite_OBJECTS = $(CXX_OBJS)
 
+
+
+SRC_COUNT = $(words $(CXX_SRC))
 COMPILED_FILES =
-$(OBJDIR)/%.opp: $(srcdir)/%.cpp
-	@$(eval COMPILED_FILES += $<)
-	@$(eval COMPILED_FILES_COUNT = $(words $(COMPILED_FILES)))
-	@printf "[$(COMPILED_FILES_COUNT)/$(FILE_COUNT)] "
-	
-	mkdir -p $(dir $@)
-	$(CXX) $(CPPFLAGS) $(AM_CPPFLAGS) $(CXXFLAGS) $(AM_CXXFLAGS) \
-	    -MD -MP -MF $@.d -MT $@ -c $< -o $@
 
-
+am__v_CXX_0 = \
+    $(eval COMPILED_FILES += $<) \
+    $(eval COMPILED_FILES_COUNT = $(words $(COMPILED_FILES))) \
+    @echo "[$(COMPILED_FILES_COUNT)/$\$(SRC_COUNT)] CXX $<" && 
 
 
 DISTCLEANFILES = \
@@ -68,4 +65,5 @@ DISTCLEANFILES = \
     ltmain.sh \
     ar-lib \
     test-driver \
-    Makefile.in
+    Makefile.in \
+    Makefile

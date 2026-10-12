@@ -162,7 +162,8 @@ mkdir -p "$LOCAL_BUILD_PATH" || exit 1
     cd ..
     cp -r $SCRIPT_DIR/modules .
     cp -r $SCRIPT_DIR/assets .
-    cp build/vivianite .
+    cp $SCRIPT_DIR/VERSION .
+    cp $LOCAL_BUILD_PATH/vivianite .
 
     echo "Done. Run vivianite using the following command:"
     echo -e "\t$(pwd)/vivianite"

@@ -7,6 +7,6 @@ One plugin renders 6 second spinning rectangle, everything hardoded.
 ```bash
 git clone https://github.com/hupikus/vivianite
 cd vivianite
-./build.sh
+./build.bash
 ```
 Accept everything that's needed from build.sh and wait for the compilation.

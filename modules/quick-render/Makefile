@@ -3,7 +3,7 @@ CXX ?= g++
 
 
 CXX_SRC = render.cpp
-CXX_INCLUDE = -I../../../include -I/usr/include/GL/
+CXX_INCLUDE = -I"$(INCLUDE_VIVIANITE_H)" -I/usr/include/GL/
 all:
 	$(CXX) -fPIC -shared $(CXX_INCLUDE) $(CXX_SRC) -o $(NAME)
 

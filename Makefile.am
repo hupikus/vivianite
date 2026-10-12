@@ -50,6 +50,22 @@ am__v_CXX_0 = \
     @echo "[$(COMPILED_FILES_COUNT)/$\$(SRC_COUNT)] CXX $<" && 
 
 
+MODULES =   modules/builtin/startscreen \
+	    modules/builtin/buffer \
+	    modules/builtin/split \
+	    modules/quick-render
+
+
+.PHONY: modules
+modules:
+	@echo "Building modules."; \
+	for dir in $(MODULES); do \
+	    $(MAKE) -C "$(abs_top_srcdir)/$$dir" \
+		INCLUDE_VIVIANITE_H="$(abs_top_srcdir)/src/include"; \
+	done
+
+all-local: modules
+
 DISTCLEANFILES = \
     $(PROJECT_NAME) \
     build-aux/ \

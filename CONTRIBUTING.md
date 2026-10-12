@@ -18,10 +18,10 @@ Example: `const char *str` instead of `const char* str` or `const char * str`. W
 After if, while, for, switch e.t.c we add a space.  
 With nested brackets you can add spaces inside from both sides if that increases readability, otherwise the statement has no space after `(`.  
 * For tabulation, use tab or 4 spaces, preferrably tab.
-* For if/while with a single statement inside, I tend to still use brackets.
-* For a short if/while with a short single statement you can place everything on a single line, with spaces around curly brackets, example: `if (root) { delete root; }`
 * An empty line between logical parts of code, it may be 2 or more proportionally if the parts don't correlate. Empty line has no trailing spaces.
 * Prefer to be explicit: do `(void)` instead of `()` (only for definitions), `= NULL` instead of no initialization, `(val != NULL)` instead of `(!val)` (except for bool types), type instead of auto etc.
+* For if/while with a single statement inside, I tend to still use brackets.
+* For a short if/while with a short single statement you can place everything on a single line, with spaces around curly brackets, example: `if (root != NULL) { delete root; }`
 * Order of macros:  
 First goes the parent header and the main header (for example, vivianite.h);  
 Then the standard library headers by their size;  

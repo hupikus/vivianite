@@ -1,6 +1,8 @@
 m4_define([VIVIANITE_VERSION], [m4_esyscmd_s([cat VERSION])])
 
 AC_INIT([vivianite],[VIVIANITE_VERSION])
+AC_CONFIG_AUX_DIR([build-aux])
+
 AM_INIT_AUTOMAKE([foreign subdir-objects])
 
 AC_PROG_CC

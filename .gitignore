@@ -5,8 +5,8 @@ Makefile.in
 install-sh
 *.Po
 missing
-configure
 .config
+configure
 aclocal.m4
 *.cache
 *.dirstamp
@@ -15,8 +15,8 @@ config.status
 config.log
 depcomp
 
-build/*
-!build/
+builds/*
+build_aux/*
 include/*
 vivianite
 Vivianite-x86_64.AppImage

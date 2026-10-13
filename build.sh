@@ -128,7 +128,7 @@ if [[ "$*" == *"--vars"* ]]; then
 fi
 
 if [[ "$*" == *"--flags"* ]]; then
-    printf "CLEAN DISTCLEAN NO_BUILD JOBS DEBUG NO_CONFIGURE NO_BUILD FORCE_CONFIGURE CREATE_SHORTCUT RUN INSTALL\n"
+    printf "CLEAN DISTCLEAN NO_BUILD JOBS DEBUG NO_CONFIGURE NO_BUILD FORCE_CONFIGURE CREATE_SHORTCUT RUN INSTALL NOCONFIRM\n"
     exit 0
 fi
 
@@ -278,9 +278,9 @@ case "$RESP" in
         fi
 
         if [[ "$EDIT" == 0 ]]; then
-            printf 'select build name.\n[%s] > ' "$name"
-            ifs= read -r answer || answer=
-            [ -n "$answer" ] && name=$answer
+            printf 'select build name.\n[%s] > ' "$NAME"
+            IFS= read -r answer || answer=
+            [ -n "$answer" ] && NAME=$answer
         fi
 
         printf 'Add any other flags that you want to include separated by space\n(see with --flags option or press Enter to skip).\n> '
@@ -383,14 +383,21 @@ if [[ "$FORCE_CONFIGURE" != 1 && "$NO_CONFIGURE" == 1 ]]; then
     echo "SKIP CONFIGURE: ON"
 fi
 
+if [[ "$NO_BUILD" == 1 ]]; then
+    echo "SKIP BUILD: ON"
+fi
+
 if [[ "$JOBS" == 1 ]]; then
     echo "JOBS: ON"
 fi
 
-if [[ "$CLEAN" == 1 ]]; then
-    echo "CLEAN BUILD: ON"
+if [[ "$DISTCLEAN" == 1 ]]; then
+    echo "DISTCLEAN BUILD: ON"
+else
+    if [[ "$CLEAN" == 1 ]]; then
+        echo "CLEAN BUILD: ON"
+    fi
 fi
-
 
 if [[ "$RUN" == 1 ]]; then
     echo "RUN AFTERWARDS: ON"
@@ -474,8 +481,9 @@ mkdir -p "$LOCAL_BUILD_PATH"
     GLOBAL_BUILD_PATH=$(pwd)
 
     if [[ "$INSTALL" == 1 ]]; then
-        INSTALL_PATH
-        echo "Installing to $INSTALL_DIR/..."
+        if [[ "$NO_BUILD" != 1 ]]; then
+            echo "Installing to $INSTALL_DIR/..."
+        fi
         {
             mkdir -p "$INSTALL_DIR"
             cd "$INSTALL_DIR"
@@ -494,6 +502,33 @@ mkdir -p "$LOCAL_BUILD_PATH"
         fi
     fi
 
+    SHORTCUT_FILE="$SCRIPT_DIR/Vivianite.desktop"
+    if [[ "$CREATE_SHORTCUT" == 1 || "$INSTALL" == 1 ]]; then
+        {
+            printf "#!/usr/bin/env xdg-open\n"
+            printf "[Desktop Entry]\n"
+
+            printf "Categories=AudioVideoEditing;AudioVideo;Development;IDE;Utility\n"
+            printf "GenericName=Scripting-oriented video editor\n"
+            printf "Name=Vivianite\n"
+            printf "Comment=Scripting Video Editor\n"
+
+            printf "Exec=%s\n" "$(pwd)/vivianite"
+            printf "Icon=%s\n" "$(pwd)/assets/icon/vivianite.png"
+
+            printf "Type=Application\n"
+            printf "StartupNotify=true\n"
+
+        } > $SHORTCUT_FILE || {
+            echo "Failed to create a shortcut." >&2
+        }
+        chmod +x "$SHORTCUT_FILE"
+        if [[ "$INSTALL" == 1 ]]; then
+            mv "$SHORTCUT_FILE" "$XDG_LOCAL_APPS_DIR/"
+            echo "Shortcut installed in the system at $XDG_LOCAL_APPS_DIR/Vivianite.desktop."
+        fi
+
+    fi
 
     if [[ "$RUN" == 1 ]]; then
         echo "Done. Running vivianite using the following command:"
@@ -501,32 +536,6 @@ mkdir -p "$LOCAL_BUILD_PATH"
         echo "Done. Run vivianite using the following command:"
     fi
     echo -e "\t$(pwd)/vivianite"
-
-    SHORTCUT_FILE="$SCRIPT_DIR/Vivianite.desktop"
-    if [[ "$CREATE_SHORTCUT" == 1 ]]; then
-        {
-            printf "#!/usr/bin/env xdg-open\n"
-            printf "[Desktop Entry]\n"
-
-            printf "Categories=AudioVideoEditing;AudioVideo;Development;IDE;Utility\n"
-            printf "Type=Application\n"
-            printf "Name=Vivianite\n"
-            printf "Comment=Scripting Video Editor\n"
-
-            printf "Exec=%s\n" "$(pwd)/vivianite"
-            printf "Icon=%s\n" "$(pwd)/vivianite/assets/icon/vivianite.png"
-
-        } > $SHORTCUT_FILE || {
-            echo "Failed to create a shortcut." >&2
-        }
-        chmod +x "$SHORTCUT_FILE"
-        if [[ "$INSTALL" == 1 ]]; then
-            mv "$HORTCUT_FILE" "$XDG_LOCAL_APPS_DIR/"
-            echo "Shortcut installed in the system."
-        fi
-
-    fi
-
 
     if [[ "$RUN" == 1 ]]; then
         ./vivianite

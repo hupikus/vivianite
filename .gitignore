@@ -28,3 +28,4 @@ output.mp4
 
 build_profiles/*
 !build_profiles/vivianite-release.profile
+tests/

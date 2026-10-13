@@ -35,7 +35,7 @@ if [[ "$*" == *"--clean"* ]]; then
 fi
 
 DISTCLEAN=0
-if [[ "$*" == *"--clean"* ]]; then
+if [[ "$*" == *"--distclean"* ]]; then
     DISTCLEAN=1
 fi
 
@@ -55,7 +55,7 @@ if [[ "$*" == *"--no-configure"* ]]; then
 fi
 
 FORCE_RECONFIGURE=0
-if [[ "$*" == *"--no-configure"* ]]; then
+if [[ "$*" == *"--force-configure"* ]]; then
     NO_RECONFIGURE=0
     FORCE_RECONFIGURE=1
 fi
@@ -89,8 +89,8 @@ if [[ "$*" == *"--help"* ]]; then
     printf "\t--vars                Print all avaliable build profile variables and exit\n"
     printf "\t--flags               Print all avaliable build flags and exit\n\n"
 
-    printf "\t--no-reconfigure      Skip Make reconfigure and configure (if set up)\n"
-    printf "\t--force-reconfigure   Force automake to regenerate configure script even if disabled\n"
+    printf "\t--no-configure        Skip Make reconfigure and configure (if set up)\n"
+    printf "\t--force-configure     Force automake to regenerate configure script even if disabled\n"
     printf "\t--clean               Run a clean build\n"
     printf "\t--distclean           Run a distclean build\n"
     printf "\t--jobs                Compile parallelly (specifying number of jobs not yet avaliable)\n\n"

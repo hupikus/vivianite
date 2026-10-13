@@ -22,6 +22,8 @@ SELECTED=0
 RESP=""
 EDIT_RESP=""
 
+FLAGS_MARK="# CUSTOM"
+
 # Parse flags
 
 JOBS=0
@@ -39,6 +41,12 @@ if [[ "$*" == *"--distclean"* ]]; then
     DISTCLEAN=1
 fi
 
+NO_BUILD=0
+if [[ "$*" == *"--no-build"* ]]; then
+    NO_BUILD=1
+    NO_CONFIGURE=1
+fi
+
 EDIT=0
 if [[ "$*" == *"--edit"* ]]; then
     EDIT=1
@@ -49,15 +57,15 @@ if [[ "$*" == *"--delete"* ]]; then
     DELETE=1
 fi
 
-NO_RECONFIGURE=0
+NO_CONFIGURE=0
 if [[ "$*" == *"--no-configure"* ]]; then
-    NO_RECONFIGURE=1
+    NO_CONFIGURE=1
 fi
 
-FORCE_RECONFIGURE=0
+FORCE_CONFIGURE=0
 if [[ "$*" == *"--force-configure"* ]]; then
-    NO_RECONFIGURE=0
-    FORCE_RECONFIGURE=1
+    NO_CONFIGURE=0
+    FORCE_CONFIGURE=1
 fi
 
 CREATE_SHORTCUT=0
@@ -82,6 +90,11 @@ if [[ "$*" == *"--run"* ]]; then
     RUN=1
 fi
 
+NOCONFIRM=0
+if [[ "$*" == *"--noconfirm"* ]]; then
+    NOCONFIRM=1
+fi
+
 if [[ "$*" == *"--help"* ]]; then
     printf "Help\n"
 
@@ -89,11 +102,13 @@ if [[ "$*" == *"--help"* ]]; then
     printf "\t--vars                Print all avaliable build profile variables and exit\n"
     printf "\t--flags               Print all avaliable build flags and exit\n\n"
 
+    printf "\t--no-build            Skip compilation\n"
     printf "\t--no-configure        Skip Make reconfigure and configure (if set up)\n"
     printf "\t--force-configure     Force automake to regenerate configure script even if disabled\n"
     printf "\t--clean               Run a clean build\n"
     printf "\t--distclean           Run a distclean build\n"
-    printf "\t--jobs                Compile parallelly (specifying number of jobs not yet avaliable)\n\n"
+    printf "\t--jobs                Compile parallelly (specifying number of jobs not yet avaliable)\n"
+    printf "\t--noconfirm           Skip confirmations\n\n"
 
     printf "\t--shortcut            Create application shortcut in script's folder\n\n"
     printf "\t--run                 Run the build after it's done\n"
@@ -113,7 +128,7 @@ if [[ "$*" == *"--vars"* ]]; then
 fi
 
 if [[ "$*" == *"--flags"* ]]; then
-    printf "CLEAN DISTCLEAN JOBS DEBUG NO_CONFIGURE FORCE_RECONFIGURE CREATE_SHORTCUT RUN INSTALL\n"
+    printf "CLEAN DISTCLEAN NO_BUILD JOBS DEBUG NO_CONFIGURE NO_BUILD FORCE_CONFIGURE CREATE_SHORTCUT RUN INSTALL\n"
     exit 0
 fi
 
@@ -203,7 +218,7 @@ APPEND_FLAGS=
 case "$RESP" in
     [Nn])
 
-        FLAGS_EDIT_READ=
+        FLAGS_EDIT_READ="$FLAGS_MARK"
         profile_file=
         if [[ "$EDIT" == 1 ]]; then
             n=1
@@ -214,9 +229,9 @@ case "$RESP" in
                     echo "Editing profile: $profile_file"
                     cat $profile_file
 
-                    FLAGS_EDIT_READ=$(sed -n '/^# FLAGS/,$p' "$profile_file")
+                    FLAGS_EDIT_READ=$(sed -n "/^${FLAGS_MARK}/,\$p" "$profile_file")
                     if [[ -z "$FLAGS_EDIT_READ" ]]; then
-                        FLAGS_EDIT_READ="# FLAGS"
+                        FLAGS_EDIT_READ="$FLAGS_MARK"
                     else
                         printf "\n"
                         echo "Remove ALL flags?"
@@ -224,8 +239,7 @@ case "$RESP" in
                         answer="n"
                         IFS= read -r answer || answer=
                         if [[ "${answer,,}" == "y" ]]; then
-                            sed -i.bak '/^# FLAGS/,$d' "$profile_file"
-                            FLAGS_EDIT_READ="# FLAGS"
+                            FLAGS_EDIT_READ="$FLAGS_MARK"
                             echo "Removed."
                         fi
                     fi
@@ -272,12 +286,8 @@ case "$RESP" in
         printf 'Add any other flags that you want to include separated by space\n(see with --flags option or press Enter to skip).\n> '
         IFS= read -r answer || answer=
         if [[ -n "$answer" || "$EDIT" == 1 ]]; then
-            if [[ "$EDIT" == 1 ]]; then
-                APPEND_FLAGS=$(printf "%s" "$answer" | sed -e 's/[^ ]*/&=1/g' -e 's/ /\n/g')
-                APPEND_FLAGS="$FLAGS_EDIT_READ"\n"$APPEND_FLAGS"
-            else
-                APPEND_FLAGS=$(printf "# FLAGS\n%s" "$answer" | sed -e 's/[^ ]*/&=1/g' -e 's/ /\n/g')
-            fi
+            APPEND_FLAGS=$(printf "%s" "$answer" | sed -e 's/[^ ]*/&=1/g' -e 's/ /\n/g')
+            APPEND_FLAGS=$(printf "%s\n%s" "$FLAGS_EDIT_READ" "$APPEND_FLAGS")
         else
             echo "Skipping..."
         fi
@@ -290,15 +300,20 @@ case "$RESP" in
 
         if [[ "$EDIT" == 0 ]]; then
             if [ -e "$profile_file" ]; then
-                printf 'Profile "%s" already exists. Overwrite? [y/N] ' "$NAME"
-                IFS= read -r overwrite || overwrite=
-                case "$overwrite" in
-                    [Yy]) ;;
-                    *)
-                        echo "Aborting."
-                        exit 1
-                        ;;
-                esac
+
+                if [[ "$NOCONFIRM" != 1 ]]; then
+                    printf 'Profile "%s" already exists. Overwrite? [y/N] ' "$NAME"
+                    IFS= read -r overwrite || overwrite=
+                    case "$overwrite" in
+                        [Yy]) ;;
+                        *)
+                            echo "Aborting."
+                            exit 1
+                            ;;
+                    esac
+                else
+                    printf 'Warning: profile "%s" already exists.' "$NAME"
+                fi
             fi
         fi
 
@@ -307,7 +322,7 @@ case "$RESP" in
         {
             printf 'NAME=%s\n' "$(printf '%s' "$NAME" | sed "s/'/'\\\\''/g")"
             printf 'BUILD_PATH=%s\n' "$(printf '%s' "$BUILD_PATH" | sed "s/'/'\\\\''/g")"
-            printf 'APP_PATH=%s\n' "$(printf '%s' "$APP_PATH" | sed "s/'/'\\\\''/g")"
+            # printf 'APP_PATH=%s\n' "$(printf '%s' "$APP_PATH" | sed "s/'/'\\\\''/g")"
             printf '%s\n' "$APPEND_FLAGS"
         } > "$profile_file" || {
             echo "Failed to save profile." >&2
@@ -364,7 +379,7 @@ if [[ "$DEBUG" == 1 ]]; then
     echo "DEBUG: ON"
 fi
 
-if [[ "$FORCE_RECONFIGURE" != 1 && "$NO_RECONFIGURE" == 1 ]]; then
+if [[ "$FORCE_CONFIGURE" != 1 && "$NO_CONFIGURE" == 1 ]]; then
     echo "SKIP CONFIGURE: ON"
 fi
 
@@ -390,17 +405,19 @@ else
 fi
 
 
-printf 'Correct? [Y/n] '
+if [[ "$NOCONFIRM" != 1 ]]; then
+    printf 'Correct? [Y/n] '
 
-IFS= read -r RESP || RESP=
+    IFS= read -r RESP || RESP=
 
-case "$RESP" in
-    ''|[Yy]) ;;
-    *)
-        echo "Aborting."
-        exit 1
-        ;;
-esac
+    case "$RESP" in
+        ''|[Yy]) ;;
+        *)
+            echo "Aborting."
+            exit 1
+            ;;
+    esac
+fi
 
 printf "%s" "$BUILD_PATH" > "$PROFILES_DIR/build_dir.txt"
 
@@ -425,7 +442,7 @@ LOCAL_BUILD_PATH="$APP_PATH/build"
 mkdir -p "$LOCAL_BUILD_PATH" 
 (
     CONFIGURE_PATH="$SCRIPT_DIR/configure"
-    if [[ "$FORCE_RECONFIGURE" != 1 && "$NO_RECONFIGURE" == 1 && -f "$CONFIGURE_PATH" && -f "$LOCAL_BUILD_PATH/Makefile" ]]; then
+    if [[ "$FORCE_CONFIGURE" != 1 && "$NO_CONFIGURE" == 1 && -f "$CONFIGURE_PATH" && -f "$LOCAL_BUILD_PATH/Makefile" ]]; then
         cd "$LOCAL_BUILD_PATH" 
     else
         autoreconf -i
@@ -441,13 +458,17 @@ mkdir -p "$LOCAL_BUILD_PATH"
         fi
     fi
 
-    if [[ "$JOBS" == 1 ]]; then
-        make -j
-    else
-        make
+    if [[ "$NO_BUILD" != 1 ]]; then
+        if [[ "$JOBS" == 1 ]]; then
+            make -j
+        else
+            make
+        fi
     fi
 
-    echo "Copying assets..."
+    if [[ "$INSTALL" == 1 || "$NO_BUILD" != 1 ]]; then
+        echo "Copying assets..."
+    fi
     cd ..
 
     GLOBAL_BUILD_PATH=$(pwd)
@@ -463,12 +484,14 @@ mkdir -p "$LOCAL_BUILD_PATH"
         }
     fi
 
-    cp -r $SCRIPT_DIR/modules .
-    cp -r $SCRIPT_DIR/assets .
-    cp $SCRIPT_DIR/VERSION .
-    cp "$GLOBAL_BUILD_PATH/build/vivianite" .
-    if [[ "$INSTALL" == 1 ]]; then
-        echo "Applicatioin installed."
+    if [[ "$INSTALL" == 1 || "$NO_BUILD" != 1 ]]; then
+        cp -r $SCRIPT_DIR/modules .
+        cp -r $SCRIPT_DIR/assets .
+        cp $SCRIPT_DIR/VERSION .
+        cp "$GLOBAL_BUILD_PATH/build/vivianite" .
+        if [[ "$INSTALL" == 1 ]]; then
+            echo "Applicatioin installed."
+        fi
     fi
 
 

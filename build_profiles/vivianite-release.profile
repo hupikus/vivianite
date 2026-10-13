@@ -1,6 +1,7 @@
 NAME=vivianite-release
 BUILD_PATH=builds
 APP_PATH=builds/vivianite-release
-# FLAGS
+
+# CUSTOM
 CLEAN=1
-DEBUG=1nn
+DEBUG=0

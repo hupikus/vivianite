@@ -1,8 +1,21 @@
-#!/usr/bin/env xdg-open
 [Desktop Entry]
-Categories=AudioVideoEditing;AudioVideo;Development;IDE;Utility
-Type=Application
-Name=Vivianite
+Categories=AudioVideoEditing;AudioVideo;Development;IDE;
 Comment=Scripting Video Editor
-Exec=vivianite
-Icon=/usr/share/vivianite/assets/icon/vivianite
+Comment[ru_RU]=Scripting Video Editor
+Exec=/home/sipuchiy/cyth/vivianite/builds/vivianite-release/vivivanite
+GenericName=
+GenericName[ru_RU]=
+Icon=/home/sipuchiy/cyth/vivianite/builds/vivianite-release/vivivanite/assets/icon/vivianite.png
+MimeType=
+Name=Vivianite
+Name[ru_RU]=Vivianite
+NoDisplay=false
+Path=/home/sipuchiy/cyth/vivianite/builds/vivianite-release/
+PrefersNonDefaultGPU=false
+StartupNotify=true
+Terminal=false
+TerminalOptions=
+Type=Application
+Version=1.0
+X-KDE-SubstituteUID=false
+X-KDE-Username=

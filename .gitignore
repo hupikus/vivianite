@@ -25,3 +25,6 @@ Vivianite-x86_64.AppImage
 modules/**/module.so
 output.mp4
 *.mp4
+
+build_profiles/*
+!build_profiles/vivianite-release.profile

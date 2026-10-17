@@ -452,9 +452,15 @@ mkdir -p "$LOCAL_BUILD_PATH"
     if [[ "$FORCE_CONFIGURE" != 1 && "$NO_CONFIGURE" == 1 && -f "$CONFIGURE_PATH" && -f "$LOCAL_BUILD_PATH/Makefile" ]]; then
         cd "$LOCAL_BUILD_PATH" 
     else
-        autoreconf -i
+        autoreconf -i || {
+            echo "autoreconf failed."
+            exit 1
+        }
         cd "$LOCAL_BUILD_PATH" 
-        $CONFIGURE_PATH
+        $CONFIGURE_PATH || {
+            echo "Configure failed."
+            exit 1
+        }
     fi
 
     if [[ "$DISTCLEAN" == 1 ]]; then
@@ -466,11 +472,16 @@ mkdir -p "$LOCAL_BUILD_PATH"
     fi
 
     if [[ "$NO_BUILD" != 1 ]]; then
-        if [[ "$JOBS" == 1 ]]; then
-            make -j
-        else
-            make
-        fi
+        {
+            if [[ "$JOBS" == 1 ]]; then
+                make -j
+            else
+                make
+            fi
+        } || {
+            echo "compilation failed."
+            exit 1
+        }
     fi
 
     if [[ "$INSTALL" == 1 || "$NO_BUILD" != 1 ]]; then
